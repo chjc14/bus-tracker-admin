@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- This viewport tag is CRITICAL for mobile phones. It makes it non-zoomable. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Bus Tracker (Admin)</title>
+    <style>
+        /* This CSS makes it look like a simple, native app. */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh; /* Full screen height */
+            margin: 0;
+            background-color: #f0f2f5;
+            padding: 15px;
+            box-sizing: border-box; /* Ensures padding doesn't break layout */
+        }
+        .container {
+            background: white;
+            padding: 2rem; /* More spacing */
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+        select, button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            box-sizing: border-box;
+        }
+        select {
+            border: 1px solid #ccc;
+            background: white;
+        }
+        button {
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #btnStart {
+            background-color: #007aff; /* Apple Blue */
+        }
+        #btnStart:disabled {
+            background-color: #a0a0a0; /* Greyed out */
+        }
+        #btnStop {
+            background-color: #ff3b30; /* Apple Red */
+        }
+        #btnStop:disabled {
+            background-color: #a0a0a0; /* Greyed out */
+        }
+        #status {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #555;
+            min-height: 40px; /* Prevents layout jump when text appears */
+            line-height: 1.4;
+            word-wrap: break-word; /* Prevents long errors from overflowing */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Bus Tracker</h1>
+        
+        <!-- This is the dropdown. Your friends MUST select their assigned route. -->
+        <select id="routeSelect">
+            <option value="">-- Select Your Route --</option>
+            <option value="route_1">Route 1 (Friend A)</option>
+            <option value="route_2">Route 2 (Friend B)</option>
+            <option value="route_3">Route 3 (Friend C)</option>
+            <option value="route_4">Route 4 (Friend D)</option>
+            <option value="route_5">Route 5 (Friend E)</option>
+            <option value="route_6">Route 6 (Your Name)</option>
+        </select>
+
+        <button id="btnStart">Start Sharing</button>
+        <button id="btnStop" disabled>Stop Sharing</button>
+
+        <!-- This div gives feedback, e.g., "Sharing..." or "Error!" -->
+        <div id="status">Select your assigned route and press Start.</div>
+    </div>
+
+    <!-- This is where the magic happens. We import the Firebase libraries. -->
+    <script type="module">
+        // 1. IMPORT FIREBASE SERVICES
+        // We are using the "script" tag method, not "npm".
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getDatabase, ref, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+        // 2. ⚠️ PASTE YOUR FIREBASE CONFIG HERE
+        // This is the "Master Key" from Step 1.
+        // This object connects this HTML file to YOUR "jasva-yana" database.
+        const firebaseConfig = {
+          // Replace this with your *own* config from your project's screenshot
+          apiKey: "AIzaSyD4bj8eWUokNXaEQ6EiDafSpWWYKUYEN58",
+          authDomain: "jasva-yana.firebaseapp.com",
+          databaseURL: "https://jasva-yana-default-rtdb.firebaseio.com",
+          projectId: "jasva-yana",
+          storageBucket: "jasva-yana.firebasestorage.app",
+          messagingSenderId: "1081627220083",
+          appId: "1:1081627220083:web:03fd06108ee97f4c957206"
+        };
+
+        // 3. INITIALIZE FIREBASE
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // 4. Get references to the HTML elements
+        const routeSelect = document.getElementById('routeSelect');
+        const btnStart = document.getElementById('btnStart');
+        const btnStop = document.getElementById('btnStop');
+        const statusEl = document.getElementById('status');
+
+        let watchId = null; // This variable will store the ID of our GPS "watcher".
+
+        // 5. This function runs when "Start" is clicked
+        btnStart.addEventListener('click', () => {
+            const selectedRoute = routeSelect.value;
+
+            // Simple validation
+            if (!selectedRoute) {
+                statusEl.textContent = "Please select your assigned route first!";
+                return;
+            }
+
+            // Check if the phone's browser has GPS
+            if (!navigator.geolocation) {
+                statusEl.textContent = "Error: Geolocation is not supported by your browser.";
+                return;
+            }
+
+            statusEl.textContent = "Connecting to GPS...";
+
+            // This is the core command. It "watches" the phone's position.
+            // It will automatically run the (position) => {...} function
+            // every time the phone moves.
+            watchId = navigator.geolocation.watchPosition(
+                (position) => {
+                    // Success! We got a location.
+                    const { latitude, longitude } = position.coords;
+                    
+                    // This is the data we will send to Firebase
+                    const locationData = {
+                        lat: latitude,
+                        lng: longitude,
+                        lastSeen: serverTimestamp() // Use Firebase's clock for accuracy
+                    };
+
+                    // This is the path we will write to, e.g. "bus_locations/route_1"
+                    const dbRef = ref(db, 'bus_locations/' + selectedRoute);
+
+                    // This is the command that sends the data to the cloud
+                    set(dbRef, locationData)
+                        .then(() => {
+                            // Give the user good feedback
+                            statusEl.innerHTML = `Sharing for <b>${selectedRoute}</b>.<br>Location updated.`;
+                        })
+                        .catch((error) => {
+                            // Handle database errors
+                            statusEl.textContent = `Error writing to database: ${error.message}`;
+                        });
+                },
+                (error) => {
+                    // This runs if the GPS fails (e.g., user denies permission)
+                    statusEl.textContent = `Error getting location: ${error.message}`;
+                },
+                {
+                    // These are options for high-accuracy tracking.
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+
+            // Update the buttons: disable "Start", enable "Stop"
+            btnStart.disabled = true;
+            btnStop.disabled = false;
+            routeSelect.disabled = true; // Lock the dropdown
+        });
+
+        // 6. This function runs when "Stop" is clicked
+        btnStop.addEventListener('click', () => {
+            // This is the crucial command to stop the GPS.
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+
+            statusEl.textContent = "Sharing stopped. You are now offline.";
+            
+            // Reset the buttons for the next use
+            btnStart.disabled = false;
+            btnStop.disabled = true;
+            routeSelect.disabled = false;
+        });
+    </script>
+</body>
+</html>
+
