@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- UPDATED TITLE -->
+    <title>Bus Routes - Jasva Yana Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Back Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* bg-slate-100 */
+        }
+        /* Style for the active button */
+        .active-btn {
+            background-color: #0d9488; /* teal-600 */
+            color: #ffffff;
+        }
+        .inactive-btn {
+            background-color: #f0fdfa; /* teal-50 */
+            color: #115e59; /* teal-800 */
+            transition: background-color 0.3s;
+        }
+        .inactive-btn:hover {
+            background-color: #ccfbf1; /* teal-100 */
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100">
+
+    <!-- NEW HEADER to match the portal -->
+    <header class="bg-white shadow-md p-4 sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Title -->
+            <h1 class="text-2xl font-bold text-teal-700">Bus Routes & Stops</h1>
+            
+            <!-- Back Button -->
+            <a href="./index.html" class="flex items-center gap-2 bg-teal-600 text-white py-2 px-4 rounded-lg shadow hover:bg-teal-700 transition duration-300 ease-in-out">
+                <i class="fas fa-arrow-left"></i>
+                Back to Portal
+            </a>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-gray-100 p-4 sticky top-[72px] z-10 shadow-sm"> <!-- Adjust top value based on header height -->
+        <div class="container mx-auto flex justify-center gap-4">
+            <button id="routes-btn" class="active-btn font-medium py-2 px-4 rounded-lg shadow transition duration-300 ease-in-out">
+                Routes Overview
+            </button>
+            <button id="stops-btn" class="inactive-btn font-medium py-2 px-4 rounded-lg shadow transition duration-300 ease-in-out">
+                All Designated Stops
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 md:p-8">
+
+        <!-- Bus Routes Section (Initially Visible) -->
+        <section id="routes-content">
+            <div id="routes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Bus routes will be dynamically populated here -->
+            </div>
+        </section>
+
+        <!-- Designated Stops Section (Initially Hidden) -->
+        <section id="stops-content" class="hidden">
+            <h2 class="text-3xl font-bold text-teal-700 mb-6 text-center">Designated Stops Details (AY 2024-25)</h2>
+            
+            <!-- Stops Tables Container - NOW A GRID -->
+            <div id="stops-tables-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Tables will be dynamically generated here as cards -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Data parsed from the provided PDF
+        const stopsData = [
+            { route: "9: PATANCHERU", area: "Patancheru", landmark: "Govt hospital", timing: "7:30 AM" },
+            { route: "9: PATANCHERU", area: "RC Puram", landmark: "Bus stop", timing: "7:35 AM" },
+            { route: "9: PATANCHERU", area: "Beerumguda", landmark: "Vijetha Super Market", timing: "7:40 AM" },
+            { route: "9: PATANCHERU", area: "Ashok Nagar", landmark: "Triveni talent school", timing: "7:47 AM" },
+            { route: "9: PATANCHERU", area: "Jyothi Theater", landmark: "Jyothi Theater", timing: "7:50 AM" },
+            { route: "9: PATANCHERU", area: "Lingampally", landmark: "HP petrol pump", timing: "7:55 AM" },
+            { route: "9: PATANCHERU", area: "Lingampally Flyover", landmark: "Union Bank of India", timing: "8:00 AM" },
+            { route: "9: PATANCHERU", area: "KFC", landmark: "KFC", timing: "8:02 AM" },
+            { route: "9: PATANCHERU", area: "Gulmohar Park", landmark: "Opp. Gulmohar Park Gate", timing: "8:05 AM" },
+            { route: "9: PATANCHERU", area: "Sudharshana Nagar", landmark: "Trampoline Studio", timing: "8:07 AM" },
+            { route: "9: PATANCHERU", area: "HCU", landmark: "SBI bank", timing: "8:10 AM" },
+            { route: "9: PATANCHERU", area: "IIIT", landmark: "Near Signal", timing: "8:15 AM" },
+            { route: "9: PATANCHERU", area: "Q City", landmark: "HMWSSB Water Tank", timing: "8:20 AM" },
+            { route: "9: PATANCHERU", area: "Financial District", landmark: "Varun Motors", timing: "8:25 AM" },
+            { route: "9: PATANCHERU", area: "Kokapet", landmark: "Global Edge School", timing: "8:30 AM" },
+            { route: "10: BACHUPALLY", area: "Bachupally", landmark: "TBD", timing: "7:30 AM" },
+            { route: "10: BACHUPALLY", area: "JP Nagar", landmark: "TBD", timing: "7:40 AM" },
+            { route: "10: BACHUPALLY", area: "Kendriya Vihar", landmark: "TBD", timing: "7:45 AM" },
+            { route: "10: BACHUPALLY", area: "Miyapur", landmark: "K.S Bakers", timing: "7:55 AM" },
+            { route: "10: BACHUPALLY", area: "Hafeezpet", landmark: "DMART (Opp)", timing: "8:05 AM" },
+            { route: "10: BACHUPALLY", area: "Kondapur", landmark: "RTA Office", timing: "8:10 AM" },
+            { route: "10: BACHUPALLY", area: "Silpa Park Kondapur", landmark: "Near Star Hyper", timing: "8:15 AM" },
+            { route: "10: BACHUPALLY", area: "Botanical Garden", landmark: "Aditya Heights", timing: "8:20 AM" },
+            { route: "10: BACHUPALLY", area: "Anjaiah Nagar", landmark: "Near White Fields", timing: "8:25 AM" },
+            { route: "10: BACHUPALLY", area: "Gachibowli", landmark: "Near KGN Xerox", timing: "8:30 AM" },
+            { route: "10: BACHUPALLY", area: "My Home Avatar", landmark: "My Home Avatar", timing: "8:35 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "Pragathi Nagar", landmark: "Elephant Circle", timing: "7:30 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "Tulasi Nagar", landmark: "Nexa Showroom", timing: "7:35 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "HMT Hills", landmark: "Ramalayam Circle", timing: "7:37 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "JNTUH Metro station", landmark: "JNTUH", timing: "7:45 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "HyderNagar", landmark: "Miyapur Main Road", timing: "7:48 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "Calvary Temple", landmark: "Miyapur Metro Station", timing: "7:50 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "Madinaguda", landmark: "Madinaguda bus stop", timing: "7:55 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "Deepthisrinagar", landmark: "Hotel kinara grand", timing: "8:00 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "My home jewel", landmark: "My home jewel", timing: "8:05 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "Gangaram", landmark: "Khazana jewellery", timing: "8:07 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "Chandanagar", landmark: "Anu furniture", timing: "8:10 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "Lingampalli", landmark: "Lingampalli policestation", timing: "8:15 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "Nallagandla", landmark: "Ratnadeep", timing: "8:25 AM" },
+            { route: "10J: PRAGATI NAGAR", area: "Gopanna palli juntion", landmark: "Gopannapalli junction", timing: "8:30 AM" },
+            { route: "11: MOTHI NAGAR", area: "Moti Nagar", landmark: "Vellanki Foods", timing: "7:35 AM" },
+            { route: "11: MOTHI NAGAR", area: "Rajeev Nagar", landmark: "Road No 3 Park", timing: "7:40 AM" },
+            { route: "11: MOTHI NAGAR", area: "Kalyan Nagar", landmark: "Agra Sweets", timing: "7:45 AM" },
+            { route: "11: MOTHI NAGAR", area: "SR Nagar", landmark: "Umesh Chandra Statue", timing: "7:47 AM" },
+            { route: "11: MOTHI NAGAR", area: "Mythrivanam", landmark: "Metro", timing: "7:50 AM" },
+            { route: "11: MOTHI NAGAR", area: "Ameerpet", landmark: "RS Brothers", timing: "7:55 AM" },
+            { route: "11: MOTHI NAGAR", area: "Erramanzil", landmark: "Erramanzil bus stop", timing: "8:00 AM" },
+            { route: "11: MOTHI NAGAR", area: "Nanal Nagar", landmark: "Olive Hospital", timing: "8:20 AM" },
+            { route: "12: MOOSAPET", area: "Moosapet", landmark: "Moosapet metro station", timing: "7:30 AM" },
+            { route: "12: MOOSAPET", area: "Bharathnagar", landmark: "flyover", timing: "7:32 AM" },
+            { route: "12: MOOSAPET", area: "Erragadda", landmark: "opp Gokul Theater", timing: "7:36 AM" },
+            { route: "12: MOOSAPET", area: "ESI", landmark: "Footover bridge", timing: "7:40 AM" },
+            { route: "12: MOOSAPET", area: "SR Nagar", landmark: "Umesh Chandra Statue", timing: "7:43 AM" },
+            { route: "12: MOOSAPET", area: "Yousufguda", landmark: "Go gas station", timing: "7:50 AM" },
+            { route: "12: MOOSAPET", area: "RBI quarters", landmark: "RBI quarters", timing: "7:53 AM" },
+            { route: "12: MOOSAPET", area: "Srinagar colony", landmark: "Near Naturals ice cream", timing: "7:56 AM" },
+            { route: "12: MOOSAPET", area: "Banjara Hills", landmark: "Green Mosque", timing: "8:00 AM" },
+            { route: "12: MOOSAPET", area: "Banjara Hills", landmark: "NTR Trust Bhavan", timing: "8:05 AM" },
+            { route: "12: MOOSAPET", area: "Banjara Hills", landmark: "Cancer Hospital", timing: "8:07 AM" },
+            { route: "12: MOOSAPET", area: "Film Nagar", landmark: "Film Nagar Temple", timing: "8:15 AM" },
+            { route: "12: MOOSAPET", area: "Dargah", landmark: "Shicaji Statue", timing: "8:25 AM" },
+            { route: "12: MOOSAPET", area: "Chitrapuri Hills", landmark: "Khajaguda Main Road", timing: "8:30 AM" },
+            { route: "13: BOWENPALLY", area: "Bapuji Nagar", landmark: "Ashoka Gardens", timing: "7:30 AM" },
+            { route: "13: BOWENPALLY", area: "New Bowenpally", landmark: "Opp. Police Station", timing: "7:37 AM" },
+            { route: "13: BOWENPALLY", area: "Ferozguda", landmark: "Bus Stop", timing: "7:43 AM" },
+            { route: "13: BOWENPALLY", area: "Shobana", landmark: "Balanagar Flyover", timing: "7:48 AM" },
+            { route: "13: BOWENPALLY", area: "Prashanth Nagar", landmark: "X Roads", timing: "7:55 AM" },
+            { route: "13: BOWENPALLY", area: "Kukatpally Y-Junction", landmark: "Near Chennai Silks", timing: "7:58 AM" },
+            { route: "13: BOWENPALLY", area: "Kukatpally", landmark: "Opp. Metro Mart", timing: "8:00 AM" },
+            { route: "13: BOWENPALLY", area: "Kukatpally BJP Office", landmark: "Near Jio store", timing: "8:02 AM" },
+            { route: "13: BOWENPALLY", area: "Kukatpally Bus Stop", landmark: "Near Metro Station", timing: "8:04 AM" },
+            { route: "13: BOWENPALLY", area: "Vivekananada Nagar", landmark: "Aakar Asha Hospital", timing: "8:05 AM" },
+            { route: "13: BOWENPALLY", area: "Nexus (Forum mall)", landmark: "Forum mall", timing: "8:10 AM" },
+            { route: "13: BOWENPALLY", area: "Malaysian Township", landmark: "Near Bus stop", timing: "8:12 AM" },
+            { route: "13: BOWENPALLY", area: "Hitech City Flyover", landmark: "Near MRF Tyres", timing: "8:15 AM" },
+            { route: "14: JEEDIMETLA", area: "Shapur Nagar", landmark: "Sagar Hotel", timing: "7:10 AM" },
+            { route: "14: JEEDIMETLA", area: "Chintal", landmark: "Ridge Towers", timing: "7:15 AM" },
+            { route: "14: JEEDIMETLA", area: "Ganesh Nagar", landmark: "SHA theater", timing: "7:20 AM" },
+            { route: "14: JEEDIMETLA", area: "IDPL", landmark: "Bus Stop", timing: "7:22 AM" },
+            { route: "14: JEEDIMETLA", area: "Fathe Nagar", landmark: "Fathenagar Bridge", timing: "7:30 AM" },
+            { route: "14: JEEDIMETLA", area: "Balkampet", landmark: "Bwarchi Hotel", timing: "7:35 AM" },
+            { route: "14: JEEDIMETLA", area: "Mythrivanam", landmark: "Bus Stop", timing: "7:40 AM" },
+            { route: "14: JEEDIMETLA", area: "Yousufguda x roads", landmark: "Go Gas", timing: "7:45 AM" },
+            { route: "14: JEEDIMETLA", area: "Krishna Nagar", landmark: "TBD", timing: "7:50 AM" },
+            { route: "14: JEEDIMETLA", area: "Jubliee Checkpost", landmark: "Bus Stop", timing: "8:00 AM" },
+            { route: "14: JEEDIMETLA", area: "Peddama Temple", landmark: "Bus stop", timing: "8:03 AM" },
+            { route: "14: JEEDIMETLA", area: "Madhapur", landmark: "Trafic Police station", timing: "8:07 AM" },
+            { route: "14: JEEDIMETLA", area: "Madhapur", landmark: "Petrol Bunk", timing: "8:10 AM" },
+            { route: "14: JEEDIMETLA", area: "Durgam cheruvu", landmark: "Metro station", timing: "8:15 AM" },
+            { route: "14: JEEDIMETLA", area: "Hitech city", landmark: "Hitec City Signal", timing: "8:20 AM" },
+            { route: "15: ATTAPUR (Via Tolichowki)", area: "Inner Ring Road", landmark: "Pillar Number 101", timing: "8:00 AM" },
+            { route: "15: ATTAPUR (Via Tolichowki)", area: "Laxmi Nagar", landmark: "Pillar Number 75", timing: "8:03 AM" },
+            { route: "15: ATTAPUR (Via Tolichowki)", area: "Toli chowki", landmark: "Flyover", timing: "8:10 AM" },
+            { route: "15: ATTAPUR (Via Tolichowki)", area: "Galaxy", landmark: "Galaxy Theatre", timing: "8:15 AM" },
+            { route: "15: ATTAPUR (Via Tolichowki)", area: "Dominos", landmark: "Passport office", timing: "8:18 AM" },
+            { route: "15: ATTAPUR (Via Tolichowki)", area: "Manikonda Main Road", landmark: "TBD", timing: "8:28 AM" },
+            { route: "15: ATTAPUR (Via Tolichowki)", area: "Puppal Guda X Rds", landmark: "TBD", timing: "8:32 AM" },
+            { route: "15: ATTAPUR (Via Tolichowki)", area: "Narsingi Rd", landmark: "TBD", timing: "8:35 AM" },
+            { route: "16: SECUNDERABAD", area: "Iskon temple", landmark: "Himayala Book store", timing: "7:30 AM" },
+            { route: "16: SECUNDERABAD", area: "Anand theater", landmark: "Anand theater", timing: "7:32 AM" },
+            { route: "16: SECUNDERABAD", area: "Rasoolpura", landmark: "Busstop", timing: "7:35 AM" },
+            { route: "16: SECUNDERABAD", area: "Pantaloons", landmark: "Pantaloons/Paradise", timing: "7:40 AM" },
+            { route: "16: SECUNDERABAD", area: "Varun Motors", landmark: "Varun Motors", timing: "7:42 AM" },
+            { route: "16: SECUNDERABAD", area: "Lifestyle", landmark: "Greenlands", timing: "7:45 AM" },
+            { route: "16: SECUNDERABAD", area: "Nagarjuna circle", landmark: "near flower bouquet shop", timing: "7:52 AM" },
+            { route: "16: SECUNDERABAD", area: "Sakshi", landmark: "Sakshi bus stop", timing: "7:57 AM" },
+            { route: "16: SECUNDERABAD", area: "Pension office", landmark: "pension office", timing: "8:00 AM" },
+            { route: "16: SECUNDERABAD", area: "Mehdipatnam", landmark: "Humayun Nagar Police station", timing: "8:10 AM" },
+            { route: "16: SECUNDERABAD", area: "Pulla Reddy sweet shop", landmark: "Pillar Numner 23", timing: "8:15 AM" },
+            { route: "16: SECUNDERABAD", area: "Langer house", landmark: "Opp Big C showroom.", timing: "8:20 AM" },
+            { route: "16: SECUNDERABAD", area: "Army School", landmark: "Bus stop", timing: "8:25 AM" },
+            { route: "16: SECUNDERABAD", area: "Suncity", landmark: "Opposite to More Market", timing: "8:28 AM" },
+            { route: "16: SECUNDERABAD", area: "Bandlaguda X Roads", landmark: "HP Petrol Bunk", timing: "8:32 AM" },
+            { route: "16: SECUNDERABAD", area: "Kalimandir", landmark: "vegetable market", timing: "8:35 AM" },
+            { route: "16: SECUNDERABAD", area: "Manchirevula X Road", landmark: "Under pass", timing: "8:40 AM" },
+            { route: "19: JAGATHGGIRIGUTTA", area: "Gajularamam", landmark: "TBD", timing: "7:20 AM" },
+            { route: "19: JAGATHGGIRIGUTTA", area: "Pipeline Road", landmark: "TBD", timing: "7:30 AM" },
+            { route: "19: JAGATHGGIRIGUTTA", area: "Jaggathgirigutta", landmark: "NTR Statue", timing: "7:40 AM" },
+            { route: "19: JAGATHGGIRIGUTTA", area: "Jagathgirigutta", landmark: "Indira Gandhi Statue", timing: "7:42 AM" },
+            { route: "19: JAGATHGGIRIGUTTA", area: "Allwyn Colony", landmark: "1st Phase X Rds", timing: "7:44 AM" },
+            { route: "19: JAGATHGGIRIGUTTA", area: "Allwyn Colony", landmark: "KL Restaurant", timing: "7:45 AM" },
+            { route: "19: JAGATHGGIRIGUTTA", area: "Bhashyam School", landmark: "Gandhi Heights", timing: "7:47 AM" },
+            { route: "19: JAGATHGGIRIGUTTA", area: "VV Nagar Colony", landmark: "Reliance Fresh", timing: "7:50 AM" },
+            { route: "19: JAGATHGGIRIGUTTA", area: "V V Nagar Colony", landmark: "Vivekanada Statue", timing: "7:52 AM" },
+            { route: "19: JAGATHGGIRIGUTTA", area: "KPHB Bus Stop", landmark: "RTC Bus Stop", timing: "7:55 AM" },
+            { route: "19: JAGATHGGIRIGUTTA", area: "JNTUH", landmark: "ICICI Bank", timing: "7:57 AM" },
+            { route: "19: JAGATHGGIRIGUTTA", area: "Malaysian Township", landmark: "Foot Over Bridge", timing: "8:02 AM" },
+            { route: "19: JAGATHGGIRIGUTTA", area: "Bio Diversity Jn", landmark: "My Home Bhooja", timing: "8:20 AM" },
+            { route: "20: ALWAL", area: "SUCHITHRA", landmark: "NEAR ALWAL BUS STOP", timing: "7:15 AM" },
+            { route: "20: ALWAL", area: "Mangapuram", landmark: "TBD", timing: "7:20 AM" },
+            { route: "20: ALWAL", area: "Fr Balaiah Nagar", landmark: "TBD", timing: "7:23 AM" },
+            { route: "20: ALWAL", area: "IG Statue", landmark: "TBD", timing: "7:26 AM" },
+            { route: "20: ALWAL", area: "Ambedkar Statue", landmark: "TBD", timing: "7:27 AM" },
+            { route: "20: ALWAL", area: "Temple Alwal", landmark: "TBD", timing: "7:28 AM" },
+            { route: "20: ALWAL", area: "Sri Bakery", landmark: "TBD", timing: "7:29 AM" },
+            { route: "20: ALWAL", area: "Alwal Junction", landmark: "TBD", timing: "7:30 AM" },
+            { route: "20: ALWAL", area: "Lothukunta", landmark: "TBD", timing: "7:35 AM" },
+            { route: "20: ALWAL", area: "Lalbazar", landmark: "TBD", timing: "7:36 AM" },
+            { route: "20: ALWAL", area: "Tirumulagiri", landmark: "TBD", timing: "7:37 AM" },
+            { route: "20: ALWAL", area: "Karkana", landmark: "TBD", timing: "7:38 AM" },
+            { route: "20: ALWAL", area: "JBS", landmark: "TBD", timing: "7:39 AM" },
+            { route: "20: ALWAL", area: "Bata", landmark: "TBD", timing: "7:41 AM" },
+            { route: "20: ALWAL", area: "Lower Tank Band", landmark: "Courtyard Marriot", timing: "7:43 AM" },
+            { route: "21: ECIL", area: "ECIL X Rds", landmark: "TBD", timing: "7:00 AM" },
+            { route: "21: ECIL", area: "Krupa Complex", landmark: "Opp Mini tank bund", timing: "7:10 AM" },
+            { route: "21: ECIL", area: "Safilguda", landmark: "Jains Construction", timing: "7:12 AM" },
+            { route: "21: ECIL", area: "Anandbagh", landmark: "After X road", timing: "7:15 AM" },
+            { route: "21: ECIL", area: "RK Nagar", landmark: "Panchami Hotel", timing: "7:20 AM" },
+            { route: "21: ECIL", area: "Malkajgiri - Anutex", landmark: "Opp Anutex shopping mall", timing: "7:22 AM" },
+            { route: "21: ECIL", area: "Sairam Theatre", landmark: "(prime bakery)", timing: "7:26 AM" },
+            { route: "21: ECIL", area: "Mirjalguda", landmark: "junction before left turning", timing: "7:28 AM" },
+            { route: "21: ECIL", area: "North Lalaguda", landmark: "Nalla Pochamma Temple", timing: "7:30 AM" },
+            { route: "21: ECIL", area: "Mettuguda", landmark: "Govt. hospital bus stop", timing: "7:33 AM" },
+            { route: "21: ECIL", area: "Chilakalguda X Roads", landmark: "TBD", timing: "7:38 AM" },
+            { route: "21: ECIL", area: "PadmaRao Nagar", landmark: "Infront of park", timing: "7:42 AM" },
+            { route: "21: ECIL", area: "Musheerabad X roads", landmark: "TBD", timing: "7:45 AM" },
+            { route: "21: ECIL", area: "Kavadiguda", landmark: "Opp NTPC", timing: "7:48 AM" },
+            { route: "21: ECIL", area: "NMDC", landmark: "Shahi Rasoi Irani Hotel", timing: "8:05 AM" },
+            { route: "22: A S RAO NAGAR", area: "Kamala Nagar", landmark: "TBD", timing: "7:23 AM" },
+            { route: "22: A S RAO NAGAR", area: "Radhika theater", landmark: "Anil Trading Center", timing: "7:26 AM" },
+            { route: "22: A S RAO NAGAR", area: "Dr.A.S.Rao Nagar", landmark: "Pista House", timing: "7:28 AM" },
+            { route: "22: A S RAO NAGAR", area: "Sharada theater", landmark: "Croma", timing: "7:30 AM" },
+            { route: "22: A S RAO NAGAR", area: "Sainikpuri", landmark: "Opp. Sainikpuri Petrol Bunk", timing: "7:31 AM" },
+            { route: "22: A S RAO NAGAR", area: "Vayupuri", landmark: "Opp.Nexa Showroom", timing: "7:33 AM" },
+            { route: "22: A S RAO NAGAR", area: "Neredmet", landmark: "Royal Enfield showroom", timing: "7:35 AM" },
+            { route: "22: A S RAO NAGAR", area: "RK Puram", landmark: "Near Bridge", timing: "7:38 AM" },
+            { route: "22: A S RAO NAGAR", area: "Army School", landmark: "After Bridge, RTC Bus Stop", timing: "7:40 AM" },
+            { route: "22: A S RAO NAGAR", area: "Thirumalgiri", landmark: "TBD", timing: "7:45 AM" },
+            { route: "22: A S RAO NAGAR", area: "JBS", landmark: "TBD", timing: "7:50 AM" },
+            { route: "22: A S RAO NAGAR", area: "Raniguj", landmark: "TBD", timing: "7:55 AM" },
+            { route: "23: NAGARAM", area: "Nagaram", landmark: "Vijayalaxmi Automobile", timing: "7:10 AM" },
+            { route: "23: NAGARAM", area: "Chakripuram", landmark: "Near Pochamma Temple", timing: "7:12 AM" },
+            { route: "23: NAGARAM", area: "Kushaiguda", landmark: "Dhanalakshmi Kirana", timing: "7:15 AM" },
+            { route: "23: NAGARAM", area: "SP Nagar", landmark: "Bus Stop", timing: "7:17 AM" },
+            { route: "23: NAGARAM", area: "HB Colony", landmark: "Indira Gandhi stature", timing: "7:22 AM" },
+            { route: "23: NAGARAM", area: "HB Colony", landmark: "NTR Statue", timing: "7:25 AM" },
+            { route: "23: NAGARAM", area: "HB Colony", landmark: "Carbon Company", timing: "7:28 AM" },
+            { route: "23: NAGARAM", area: "ZTC", landmark: "Coco Cola signal", timing: "7:30 AM" },
+            { route: "23: NAGARAM", area: "Lalapet", landmark: "Near Nala", timing: "7:33 AM" },
+            { route: "23: NAGARAM", area: "Lalapet", landmark: "Ambedkar Statue", timing: "7:35 AM" },
+            { route: "23: NAGARAM", area: "Tarnaka", landmark: "White House", timing: "7:37 AM" },
+            { route: "23: NAGARAM", area: "Seethaphal Mandi", landmark: "Namalagundu X Rds", timing: "7:45 AM" },
+            { route: "23: NAGARAM", area: "Chilkalguda", landmark: "Just before main road", timing: "7:50 AM" },
+            { route: "23: NAGARAM", area: "Bhoi Guda", landmark: "TBD", timing: "7:53 AM" },
+            { route: "23: NAGARAM", area: "Gandhi Hospital", landmark: "TBD", timing: "7:55 AM" },
+            { route: "31: RAMANTHAPUR", area: "SURVEY OF INDIA", landmark: "MODERN BREAD LANE", timing: "7:15 AM" },
+            { route: "31: RAMANTHAPUR", area: "RAMANTHAPUR", landmark: "RAMANTHAPUR CHURCH", timing: "7:20 AM" },
+            { route: "31: RAMANTHAPUR", area: "RAMANTHAPUR", landmark: "ADRM", timing: "7:23 AM" },
+            { route: "31: RAMANTHAPUR", area: "RAMANTHAPUR", landmark: "VISHAL", timing: "7:28 AM" },
+            { route: "31: RAMANTHAPUR", area: "AMBERPET", landmark: "IRANI HOTEL", timing: "7:32 AM" },
+            { route: "31: RAMANTHAPUR", area: "SHIVAM ROAD", landmark: "PAPAJI KA DHABA", timing: "7:40 AM" },
+            { route: "31: RAMANTHAPUR", area: "SHIVAM ROAD", landmark: "TARUNI", timing: "7:43 AM" },
+            { route: "31: RAMANTHAPUR", area: "SHIVAM ROAD", landmark: "RELIANCE DIGITAL", timing: "7:45 AM" },
+            { route: "31: RAMANTHAPUR", area: "NALLAKUNTA", landmark: "VIJAYA DIAGNOSTIC", timing: "7:50 AM" },
+            { route: "31: RAMANTHAPUR", area: "BARAKATPURA", landmark: "BUS STOP", timing: "7:55 AM" },
+            { route: "31: RAMANTHAPUR", area: "NARAYANAGUDA", landmark: "CPI OFFICE", timing: "8:00 AM" },
+            { route: "31: RAMANTHAPUR", area: "LIBERTY", landmark: "OPP TTD", timing: "8:05 AM" },
+            { route: "31: RAMANTHAPUR", area: "MASABTANK", landmark: "MAHAVIR HOSPITAL", timing: "8:15 AM" },
+            { route: "33: BODUPPAL", area: "Boduppal", landmark: "Boduppal Kaman", timing: "7:10 AM" },
+            { route: "33: BODUPPAL", area: "Boduppal", landmark: "NTR Statue", timing: "7:15 AM" },
+            { route: "33: BODUPPAL", area: "Boduppal", landmark: "Ambedkar Statue", timing: "7:20 AM" },
+            { route: "33: BODUPPAL", area: "Nacharam", landmark: "TBD", timing: "7:25 AM" },
+            { route: "33: BODUPPAL", area: "HMT Hills", landmark: "TBD", timing: "7:30 AM" },
+            { route: "33: BODUPPAL", area: "Hubsiguda", landmark: "Sarathi School", timing: "7:35 AM" },
+            { route: "33: BODUPPAL", area: "Tarnaka", landmark: "RTC Hospital", timing: "7:40 AM" },
+            { route: "33: BODUPPAL", area: "Ram Nagar", landmark: "E-Seva", timing: "7:45 AM" },
+            { route: "33: BODUPPAL", area: "VST X Roads", landmark: "VST Road", timing: "7:50 AM" },
+            { route: "33: BODUPPAL", area: "RTC X Roads", landmark: "Bajaj Electronics", timing: "7:55 AM" },
+            { route: "33: BODUPPAL", area: "Jawahar Nagar", landmark: "TBD", timing: "7:58 AM" },
+            { route: "33: BODUPPAL", area: "Ashok Nagar", landmark: "TBD", timing: "8:00 AM" },
+            { route: "34: UPPAL DEPOT", area: "Medipally", landmark: "Canara Nagar", timing: "7:15 AM" },
+            { route: "34: UPPAL DEPOT", area: "Uppal Depo", landmark: "Uppal Depo", timing: "7:17 AM" },
+            { route: "34: UPPAL DEPOT", area: "Peerazadiguda", landmark: "Kaman", timing: "7:20 AM" },
+            { route: "34: UPPAL DEPOT", area: "Southindia Shopping Mall", landmark: "TBD", timing: "7:23 AM" },
+            { route: "34: UPPAL DEPOT", area: "Uppal Bus Stop", landmark: "Registration Office", timing: "7:25 AM" },
+            { route: "34: UPPAL DEPOT", area: "Habsiguda Street No8", landmark: "Chowrasta signal", timing: "7:33 AM" },
+            { route: "34: UPPAL DEPOT", area: "HPS Ramanthapur", landmark: "ADRM", timing: "7:35 AM" },
+            { route: "34: UPPAL DEPOT", area: "Ramanthapur", landmark: "PetrolBunk", timing: "7:38 AM" },
+            { route: "34: UPPAL DEPOT", area: "Amberpet", landmark: "Tricolor Hosipital", timing: "7:40 AM" },
+            { route: "34: UPPAL DEPOT", area: "Amberpet", landmark: "Sree Ramana Theatre", timing: "7:42 AM" },
+            { route: "34: UPPAL DEPOT", area: "Tilak Nagar", landmark: "Tilak Nagar", timing: "7:47 AM" },
+            { route: "34: UPPAL DEPOT", area: "Fever Hosipital", landmark: "Rgavendra tiffins", timing: "7:50 AM" },
+            { route: "34: UPPAL DEPOT", area: "Narayanguda", landmark: "Flyover down", timing: "7:55 AM" },
+            { route: "34: UPPAL DEPOT", area: "Liberty", landmark: "Libert Circle", timing: "8:05 AM" },
+            { route: "34: UPPAL DEPOT", area: "Lakadikapool", landmark: "Hotel Anmol", timing: "8:10 AM" },
+            { route: "40: NAGOLE", area: "Nagole", landmark: "HP Petrol Bunk", timing: "7:25 AM" },
+            { route: "40: NAGOLE", area: "Alkapuri", landmark: "R.T.C Bus stop", timing: "7:30 AM" },
+            { route: "40: NAGOLE", area: "Rocktown", landmark: "Rockhills Arch", timing: "7:35 AM" },
+            { route: "40: NAGOLE", area: "Kamineni", landmark: "Bata Showroom", timing: "7:38 AM" },
+            { route: "40: NAGOLE", area: "LB Nagar", landmark: "End of Underpass", timing: "7:40 AM" },
+            { route: "40: NAGOLE", area: "Alekhya Towers", landmark: "School", timing: "7:42 AM" },
+            { route: "40: NAGOLE", area: "TKR Arch", landmark: "R.T.C Bus stop", timing: "7:45 AM" },
+            { route: "40: NAGOLE", area: "Gayathri Nagar X Roads", landmark: "R.T.C Bus stop", timing: "7:48 AM" },
+            { route: "40: NAGOLE", area: "Mandamallama Junction", landmark: "Near Jillelguda X road", timing: "7:50 AM" },
+            { route: "40: NAGOLE", area: "Balapur X Roads", landmark: "Reliance Trends", timing: "7:55 AM" },
+            { route: "40: NAGOLE", area: "Midhani X Roads", landmark: "Midhani", timing: "8:00 AM" },
+            { route: "40: NAGOLE", area: "Rajendra Nagar", landmark: "Rajendra Nagar Bus Stop", timing: "8:20 AM" },
+            { route: "41: SAROOR NAGAR", area: "Saroornagar", landmark: "Junior college ground", timing: "7:25 AM" },
+            { route: "41: SAROOR NAGAR", area: "Saraswathi Nagar", landmark: "Shankeshwara Temple", timing: "7:30 AM" },
+            { route: "41: SAROOR NAGAR", area: "Saidabad", landmark: "oppo.ICICI ATM", timing: "7:35 AM" },
+            { route: "41: SAROOR NAGAR", area: "Chanchalguda", landmark: "TBD", timing: "7:40 AM" },
+            { route: "41: SAROOR NAGAR", area: "Malakpet", landmark: "TBD", timing: "7:45 AM" },
+            { route: "41: SAROOR NAGAR", area: "Chaderghat", landmark: "TBD", timing: "7:50 AM" },
+            { route: "41: SAROOR NAGAR", area: "City College", landmark: "TBD", timing: "7:55 AM" },
+            { route: "41: SAROOR NAGAR", area: "Bahadurpura", landmark: "TBD", "timing": "8:05 AM" },
+            { route: "41: SAROOR NAGAR", area: "Aramghar", landmark: "TBD", timing: "8:10 AM" },
+            { route: "41: SAROOR NAGAR", area: "Attapur", landmark: "Pillar No:139", timing: "8:25 AM" },
+            { route: "41: SAROOR NAGAR", area: "Attapur", landmark: "Pillar no:121", timing: "8:27 AM" },
+            { route: "41: SAROOR NAGAR", area: "Vijetha Super Mart", landmark: "TBD", timing: "8:30 AM" },
+            { route: "41: SAROOR NAGAR", area: "Tipukhan Bridge", landmark: "Beyond Traffic Signal", timing: "8:35 AM" },
+            { route: "43: HAYATHNAGAR", area: "Hayathnagar Bus Depot", landmark: "Opposite Rolls & Grills", timing: "7:20 AM" },
+            { route: "43: HAYATHNAGAR", area: "Bagyalatha (Bus Stop)", landmark: "Raghavendra Tiffin Centre", timing: "7:23 AM" },
+            { route: "43: HAYATHNAGAR", area: "High Court Colony", landmark: "Entrance", timing: "7:27 AM" },
+            { route: "43: HAYATHNAGAR", area: "Auto Nagar", landmark: "TBD", timing: "7:30 AM" },
+            { route: "43: HAYATHNAGAR", area: "Sushma", landmark: "Opposite D Mart", timing: "7:32 AM" },
+            { route: "43: HAYATHNAGAR", area: "Panama Godowns", landmark: "Vidhayam Furniture", timing: "7:34 AM" },
+            { route: "43: HAYATHNAGAR", area: "Raghavendra Bhavan", landmark: "Tiffin Centre", timing: "7:36 AM" },
+            { route: "43: HAYATHNAGAR", area: "Chitalkunta X Road", landmark: "Opposite Etrant", timing: "7:40 AM" },
+            { route: "43: HAYATHNAGAR", area: "TKR Kaman", landmark: "Kaman", timing: "7:42 AM" },
+            { route: "43: HAYATHNAGAR", area: "Vanga Anatha Reddy", landmark: "VAR Gardens", timing: "7:45 AM" },
+            { route: "43: HAYATHNAGAR", area: "Mandha Mallamma", landmark: "Shiv Timber Depot", timing: "7:48 AM" },
+            { route: "43: HAYATHNAGAR", area: "Owaisi", landmark: "Owaisi Hospital", timing: "7:50 AM" },
+            { route: "43: HAYATHNAGAR", area: "Midhani", landmark: "KV Kanchanbagh", timing: "7:53 AM" },
+            { route: "43: HAYATHNAGAR", area: "DRDO", landmark: "Main gate", timing: "7:55 AM" },
+            { route: "43: HAYATHNAGAR", area: "Chandrayangutta", landmark: "TBD", timing: "8:00 AM" },
+            { route: "43: HAYATHNAGAR", area: "Mailardevpally", landmark: "Medha V Junior College", timing: "8:05 AM" },
+            { route: "43: HAYATHNAGAR", area: "Aramghar", landmark: "Pista House", timing: "8:10 AM" },
+            { route: "43: HAYATHNAGAR", area: "National Fisheries Board", landmark: "Pillar 235", timing: "8:15 AM" },
+            { route: "43: HAYATHNAGAR", area: "Upeerpalli", landmark: "pillar no:214", timing: "8:20 AM" },
+            { route: "43: HAYATHNAGAR", area: "Attapur", landmark: "pillar no:191", timing: "8:22 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Ganesh Temple", landmark: "Ganesh Temple Bus stop", timing: "7:25 AM" },
+            { route: "44: BN REDDY NAGAR", area: "NGO s colony Bus stop", landmark: "NGO colony Bus stop", timing: "7:27 AM" },
+            { route: "44: BN REDDY NAGAR", area: "DPS School", landmark: "DPS School", timing: "7:30 AM" },
+            { route: "44: BN REDDY NAGAR", area: "BN Reddy Nagar", landmark: "BN Reddy X Roads", timing: "7:32 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Amma Hospital", landmark: "amma hospital", timing: "7:35 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Hastinapuram", landmark: "hastinapuram bus stop", timing: "7:37 AM" },
+            { route: "44: BN REDDY NAGAR", area: "santhoshi matha road", landmark: "GMR function Hall", timing: "7:39 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Omkar Nagar", landmark: "Omkar Nagar Bus stop", timing: "7:40 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Sagar X Roads", landmark: "Sagar X Roads", timing: "7:41 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Biramulguda", landmark: "Biramulguda Bus stop", timing: "7:42 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Karmanghar", landmark: "Bus Stop", timing: "7:43 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Green park colony", landmark: "Green park colony Bus stop", timing: "7:49 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Bata Show room", landmark: "bata Show room", timing: "7:51 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Champapet", landmark: "Petrol Pump", timing: "7:53 AM" },
+            { route: "44: BN REDDY NAGAR", area: "IS Sadan", landmark: "At beyond Traffic signal", timing: "7:55 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Santosh nagar", landmark: "Yadagiri Theatre", timing: "7:55 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Owaisi Hospital", landmark: "Near Bus Stop", timing: "8:00 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Aramghar X Roads", landmark: "Aramghar X roads", timing: "8:18 AM" },
+            { route: "44: BN REDDY NAGAR", area: "Rajendra Nagar", landmark: "Rajendra Nagar Busstop", timing: "8:22 AM" },
+            { route: "45: L B NAGAR", area: "L.B. Nagar", landmark: "L.B. Nagar Bus Stop", timing: "7:30 AM" },
+            { route: "45: L B NAGAR", area: "Victoria Memorial", landmark: "Opposite Chitra Layout", timing: "7:33 AM" },
+            { route: "45: L B NAGAR", area: "Astalaxmi Temple", landmark: "Fashion Factory", timing: "7:35 AM" },
+            { route: "45: L B NAGAR", area: "PVT Market", landmark: "PVT Market", timing: "7:37 AM" },
+            { route: "45: L B NAGAR", area: "Chaitanyapuri", landmark: "Centro Shop", timing: "7:39 AM" },
+            { route: "45: L B NAGAR", area: "Dilsukhnagar", landmark: "Metro Station", timing: "7:42 AM" },
+            { route: "45: L B NAGAR", area: "Moosarambagh", landmark: "T.V. Tower", timing: "7:44 AM" },
+            { route: "45: L B NAGAR", area: "Moosarambagh", landmark: "PVR", timing: "7:46 AM" },
+            { route: "45: L B NAGAR", area: "New Market", landmark: "New Market Metro Station", timing: "7:48 AM" },
+            { route: "45: L B NAGAR", area: "Malakpet", landmark: "Yashoda Hospital", timing: "7:50 AM" },
+            { route: "45: L B NAGAR", area: "Chadarghat", landmark: "Chadarghat Police Station", timing: "7:54 AM" },
+            { route: "45: L B NAGAR", area: "Chadarghat", landmark: "Victoria Play Ground", timing: "7:55 AM" },
+            { route: "45: L B NAGAR", area: "Sultan Bazar", landmark: "Metro Station", timing: "7:57 AM" },
+            { route: "45: L B NAGAR", area: "MJ Market", landmark: "MJ Market X Road Signal", timing: "8:00 AM" },
+            { route: "45: L B NAGAR", area: "Abids", landmark: "Abids GPO Bus Stand", timing: "8:01 AM" },
+            { route: "45: L B NAGAR", area: "Nampally", landmark: "Nampally Metro Station", timing: "8:03 AM" },
+            { route: "49: NIZAMPET", area: "Nizampet water Tank", landmark: "Nizampet Road", timing: "7:40 AM" },
+            { route: "49: NIZAMPET", area: "Hanuman temple", landmark: "Nizampet Road", timing: "7:45 AM" },
+            { route: "49: NIZAMPET", area: "Karur vysya Bank", landmark: "Nizampet Road", timing: "7:47 AM" },
+            { route: "49: NIZAMPET", area: "Kolan Ragha reddy", landmark: "Nizampet Road", timing: "7:50 AM" },
+            { route: "49: NIZAMPET", area: "Holistic Hospital", landmark: "Nizampet Road", timing: "7:52 AM" },
+            { route: "49: NIZAMPET", area: "JNTUH Metro station", landmark: "JNTUH", timing: "7:55 AM" },
+            { route: "49: NIZAMPET", area: "Vasanth Nagar", landmark: "TBD", timing: "8:00 AM" },
+            { route: "49: NIZAMPET", area: "Forum Mall", landmark: "TBD", timing: "8:05 AM" },
+            { route: "49: NIZAMPET", area: "Raintree Park", landmark: "Near Foot Over Bridge", timing: "8:10 AM" },
+            { route: "49: NIZAMPET", area: "Yashoda Hospital", landmark: "Opp Hospital", timing: "8:15 AM" },
+            { route: "49: NIZAMPET", area: "Hitex", landmark: "Raichandani Mall", timing: "8:20 AM" },
+        ];
+        
+        // I've also found and fixed the typos in the data array below,
+        // like "Music", "custom", "Main", "Choose", "s:", "GET"
+        // and replaced them with the correct route numbers.
+
+        // Function to populate the stops tables (one per route)
+        function populateStopsTable() {
+            const tablesContainer = document.getElementById('stops-tables-container');
+            if (!tablesContainer) return; // Guard clause
+            tablesContainer.innerHTML = ''; // Clear existing content
+
+            // Group stops by route, pushing the full stop object
+            const routesMap = new Map();
+            stopsData.forEach(stop => {
+                // Data correction for typos - REMOVED this logic as data is now clean
+                
+                if (!routesMap.has(stop.route)) {
+                    routesMap.set(stop.route, []);
+                }
+                routesMap.get(stop.route).push(stop);
+            });
+
+            // Create a table for each route
+            routesMap.forEach((stops, routeName) => {
+                
+                // NEW: Create a card for each route
+                const routeCard = document.createElement('div');
+                routeCard.className = 'bg-white rounded-xl shadow-lg overflow-hidden flex flex-col'; // Added flex-col to manage height
+
+                // Create title for the table
+                const title = document.createElement('h3');
+                title.className = 'text-2xl font-bold text-teal-700 mb-4 p-6 pb-0'; // Add padding
+                title.textContent = routeName;
+
+                // Create table wrapper for shadow and rounding
+                const tableWrapper = document.createElement('div');
+                tableWrapper.className = 'overflow-x-auto p-6 pt-4 flex-grow'; // Add padding and flex-grow
+
+                // Create table element
+                const table = document.createElement('table');
+                table.className = 'min-w-full divide-y divide-gray-200';
+
+                // Create table header
+                const theadHtml = `
+                    <thead class="bg-teal-600">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Area</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Landmark</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Timing</th>
+                        </tr>
+                    </thead>`;
+
+                // Create table body
+                let tbodyHtml = '<tbody class="bg-white divide-y divide-gray-200">';
+                stops.forEach((stop, index) => {
+                    const landmark = stop.landmark === 'TBD' ? '-' : stop.landmark;
+                    const rowClass = index % 2 === 0 ? 'bg-white' : 'bg-teal-50';
+                    tbodyHtml += `
+                        <tr class="${rowClass} hover:bg-teal-100 transition-colors duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${stop.area}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${landmark}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">${stop.timing}</td>
+                        </tr>`;
+                });
+                tbodyHtml += '</tbody>';
+
+                // Assemble and append
+                table.innerHTML = theadHtml + tbodyHtml;
+                tableWrapper.appendChild(table);
+                
+                // Append title and table wrapper to the new card
+                routeCard.appendChild(title);
+                routeCard.appendChild(tableWrapper);
+
+                // Append the new card to the grid container
+                tablesContainer.appendChild(routeCard);
+            });
+        }
+
+        // Function to populate the bus routes cards
+        function populateRoutesCards() {
+            const routesGrid = document.getElementById('routes-grid');
+            if (!routesGrid) return; // Guard clause
+            routesGrid.innerHTML = ''; // Clear existing content
+
+            // Group stops by route
+            const routesMap = new Map();
+            stopsData.forEach(stop => {
+                if (!routesMap.has(stop.route)) {
+                    routesMap.set(stop.route, []);
+                }
+                routesMap.get(stop.route).push(stop.area);
+            });
+
+            routesMap.forEach((stops, routeName) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out overflow-hidden border-t-4 border-teal-600';
+                
+                let stopsHtml = '';
+                stops.forEach(stopName => {
+                    stopsHtml += `<li class="text-gray-600">${stopName}</li>`;
+                });
+
+                card.innerHTML = `
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-teal-700 mb-3">${routeName}</h3>
+                        <div class="border-t border-gray-200 pt-3">
+                            <h4 class="font-semibold text-gray-800 mb-2">Stops:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                ${stopsHtml}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                routesGrid.appendChild(card);
+            });
+        }
+
+        // Get button and content elements
+        const routesBtn = document.getElementById('routes-btn');
+        const stopsBtn = document.getElementById('stops-btn');
+        const routesContent = document.getElementById('routes-content');
+        const stopsContent = document.getElementById('stops-content');
+
+        // Function to update button styles and content visibility
+        function updateButtonStyles(activeSection) {
+            if (activeSection === 'routes') {
+                // Set Routes as active
+                routesBtn.classList.add('active-btn');
+                routesBtn.classList.remove('inactive-btn');
+                stopsBtn.classList.add('inactive-btn');
+                stopsBtn.classList.remove('active-btn');
+                
+                // Show Routes content, hide Stops content
+                routesContent.classList.remove('hidden');
+                stopsContent.classList.add('hidden');
+            } else if (activeSection === 'stops') {
+                // Set Stops as active
+                stopsBtn.classList.add('active-btn');
+                stopsBtn.classList.remove('inactive-btn');
+                routesBtn.classList.add('inactive-btn');
+                routesBtn.classList.remove('active-btn');
+                
+                // Show Stops content, hide Routes content
+                stopsContent.classList.remove('hidden');
+                routesContent.classList.add('hidden');
+            }
+        }
+
+        // Add click event listeners
+        routesBtn.addEventListener('click', () => updateButtonStyles('routes'));
+        stopsBtn.addEventListener('click', () => updateButtonStyles('stops'));
+
+        // --- On Page Load ---
+        
+        // Populate both sections
+        populateStopsTable();
+        populateRoutesCards();
+        
+        // Set initial visible section and button state
+        updateButtonStyles('routes');
+    </script>
+
+</body>
+</html>
+
+
+

@@ -27,7 +27,7 @@
             color: #333;
         }
 
-        /* Header Styling (Unchanged) */
+        /* Header Styling */
         header {
             display: flex;
             justify-content: space-between;
@@ -48,6 +48,7 @@
         .header-nav {
             display: flex;
             gap: 1.75rem; /* 28px */
+            align-items: center; /* Ensures buttons are aligned */
         }
         .header-nav a {
             display: flex;
@@ -58,32 +59,47 @@
             font-weight: 700;
             font-size: 0.95rem;
             transition: color 0.3s ease;
+            padding: 0.6rem 0; /* Add padding for a larger click area, but 0 left/right */
         }
         .header-nav a:hover {
             color: #007BFF;
         }
+        
+        /* Button Style for "Track Bus" and "Bus Routes" */
         .header-nav .nav-button {
             background-color: #007BFF;
             color: white;
-            padding: 0.6rem 1.2rem;
+            padding: 0.6rem 1.2rem; /* Specific padding for buttons */
             border-radius: 8px;
             transition: background-color 0.3s, transform 0.3s;
         }
         .header-nav .nav-button:hover {
             background-color: #0056b3;
             transform: translateY(-2px);
-            color: white;
+            color: white; /* Ensure text stays white on hover */
         }
+
+        /* NEW: Secondary Button Style for "Bus Routes" */
+        .header-nav .nav-button-secondary {
+            background-color: #e7f3ff; /* Light blue */
+            color: #0056b3; /* Dark blue text */
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .header-nav .nav-button-secondary:hover {
+            background-color: #d0e7ff; /* Slightly darker light blue */
+            transform: translateY(-2px);
+            color: #0056b3;
+        }
+
         .menu-toggle {
             display: none; /* For mobile */
             font-size: 1.5rem;
             cursor: pointer;
         }
 
-        /* * NEW HERO SECTION STYLING 
-         * This is the main fix. 
-         * 'flex-grow: 1' tells it to take up ALL available empty space.
-         */
+        /* HERO SECTION STYLING */
         .hero-section {
             flex-grow: 1; /* This is the fix! */
             display: flex;
@@ -101,7 +117,6 @@
             font-size: clamp(3rem, 10vw, 6.5rem); /* Responsive font size */
             font-weight: 700;
             margin: 0;
-            /* Restored the previous solid color */
             color: #2a9d8f;
         }
 
@@ -113,10 +128,7 @@
             font-weight: 400;
         }
 
-        /* * NEW FOOTER STYLING 
-         * This is the second fix.
-         * 'margin-top: auto' pushes it to the bottom.
-         */
+        /* FOOTER STYLING */
         .footer {
             width: 100%;
             text-align: center;
@@ -156,10 +168,15 @@
         
         <!-- Navigation -->
         <nav class="header-nav">
-            <!-- These links will go to your other HTML pages -->
             <a href="./map.html" class="nav-button">
                 <i class="fas fa-bus"></i>Track Bus
             </a>
+            
+            <!-- NEW BUS ROUTES BUTTON ADDED -->
+            <a href="./bus_routes.html" class="nav-button-secondary">
+                <i class="fas fa-route"></i>Bus Routes
+            </a>
+            
             <a href="./incharges.html">
                 <i class="fas fa-users"></i>In-charge Details
             </a>
@@ -190,6 +207,7 @@
 
 </body>
 </html>
+
 
 
 
