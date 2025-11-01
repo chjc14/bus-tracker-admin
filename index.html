@@ -3,197 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>College Bus Tracker</title>
-
-    <!-- 1. Load the Leaflet.js CSS file (for map styling) -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
-
+    <title>College Bus Service</title>
+    <!-- Import Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Import Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-        /* Make the map fill the entire screen */
-        body { margin: 0; padding: 0; }
-        #map { height: 100vh; width: 100%; }
-
-        /* Style for the control panel (dropdown, status) */
-        .control-panel {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%); /* Center it */
-            z-index: 1000; /* Float on top of the map */
-            background: white;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            font-family: Arial, sans-serif;
+        body {
+            /* Use new fonts */
+            font-family: 'Lato', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            /* New subtle gradient background */
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
-        #routeSelect {
-            font-size: 1rem;
-            padding: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        #status {
-            font-size: 0.8rem;
-            color: #555;
-            margin-top: 8px;
+        .container {
             text-align: center;
-            min-height: 1.2em;
+            background: #ffffff;
+            padding: 2.5rem 3rem;
+            /* New "card" style */
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+            border-top: 5px solid #007BFF; /* Primary color accent */
+        }
+        h1 {
+            /* New heading font */
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #333;
+            margin-top: 0;
+            font-size: 2rem;
+        }
+        p {
+            color: #555;
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        .button {
+            display: flex; /* Use flex to align icon and text */
+            align-items: center;
+            justify-content: center;
+            gap: 12px; /* Space between icon and text */
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            text-decoration: none;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .button-primary {
+            /* "Go" color - Green */
+            background-color: #28a745; 
+        }
+        .button-secondary {
+            /* "Info" color - Teal */
+            background-color: #17a2b8;
+        }
+        .button:hover {
+            transform: translateY(-3px); /* Lift effect */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
         }
     </style>
 </head>
 <body>
-
-    <!-- This is the "control panel" that floats on the map -->
-    <div class="control-panel">
-        <select id="routeSelect">
-            <option value="">-- Select a Bus Route --</option>
-            <option value="route_1">Route 1 (Friend A)</option>
-            <option value="route_2">Route 2 (Friend B)</option>
-            <option value="route_3">Route 3 (Friend C)</option>
-            <option value="route_4">Route 4 (Friend D)</option>
-            <option value="route_5">Route 5 (Friend E)</option>
-            <option value="route_6">Route 6 (Your Name)</option>
-        </select>
-        <div id="status">Welcome!</div>
-    </div>
-
-    <!-- This div is where the map will be drawn -->
-    <div id="map"></div>
-
-    <!-- 2. Load the Leaflet.js JavaScript file -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
-
-    <!-- 3. Load the Firebase JavaScript files -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getDatabase, ref, onValue, off } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
-
-        // 4. Your *SAME* Firebase Config from your "jasva-yana" project
-        const firebaseConfig = {
-          apiKey: "AIzaSy...UYEN58", // Copied from your screenshot
-          authDomain: "jasva-yana.firebaseapp.com",
-          databaseURL: "https://jasva-yana-default-rtdb.firebaseio.com",
-          projectId: "jasva-yana",
-          storageBucket: "jasva-yana.firebaseapp.com",
-          messagingSenderId: "1081...003",
-          appId: "1:1081...c957206"
-        };
-
-        // 5. Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // 6. Get references to our HTML elements
-        const routeSelect = document.getElementById('routeSelect');
-        const statusEl = document.getElementById('status');
+    <div class="container">
+        <h1>College Bus Portal</h1>
+        <p>Welcome! Please select an option.</p>
         
-        // 7. Initialize the Map
-        // We're centering it on Hyderabad (17.385, 78.487)
-        const map = L.map('map').setView([17.385, 78.487], 12);
-
-        // 8. Add the map "tiles" (the actual map image) from OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-
-        // 9. Create a custom, high-quality bus icon (inline SVG)
-        // This is the "good graphics" part!
-        const busIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23007aff" width="36px" height="36px"><path d="M0 0h24v24H0z" fill="none"/><path d="M18.9 7.77c.08-.24.1-.49.1-.77 0-2.76-2.24-5-5-5S9 4.24 9 7c0 .28.02.53.1.77C6.6 8.4 5 10.51 5 13v6c0 1.1.9 2 2 2h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c1.1 0 2-.9 2-2v-6c0-2.49-1.6-4.6-4.1-5.23zM14 18H10v-5h4v5zM12 5c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/><circle cx="8.5" cy="14.5" r="1.5"/><circle cx="15.5" cy="14.5" r="1.5"/></svg>`;
-        const busIcon = L.icon({
-            iconUrl: 'data:image/svg+xml;charset=UTF-8,' + busIconSVG,
-            iconSize: [36, 36],
-            iconAnchor: [18, 18] // Point of the icon which will correspond to marker's location
-        });
-
-        // 10. Global variables to keep track of the *current* bus
-        let currentMarker = null; // Will store the Leaflet marker object
-        let currentListener = null; // Will store the Firebase listener
-        let currentRoute = ""; // Will store the selected route name
-
-        // 11. This is the MAIN function. It runs when a student selects a route.
-        routeSelect.addEventListener('change', () => {
-            currentRoute = routeSelect.value;
-            statusEl.textContent = "Loading...";
-
-            // --- Cleanup ---
-            // 1. If we already have a marker, remove it from the map
-            if (currentMarker) {
-                currentMarker.remove();
-                currentMarker = null;
-            }
-            // 2. If we are already listening to an old route, stop listening.
-            // This is CRITICAL to prevent "ghost" buses.
-            if (currentListener) {
-                off(currentListener); // Detach the old listener
-            }
-            // --- End Cleanup ---
-
-            if (!currentRoute) {
-                statusEl.textContent = "Select a route to begin.";
-                return;
-            }
-
-            // 1. Create the database path, e.g., "bus_locations/route_1"
-            const dbRef = ref(db, 'bus_locations/' + currentRoute);
-            statusEl.textContent = `Connecting to ${currentRoute}...`;
-
-            // 2. This is the "magic" listener.
-            // It runs once immediately, and then *again* every time
-            // the data changes in Firebase (i.e., your friend moves).
-            currentListener = onValue(dbRef, (snapshot) => {
-                const data = snapshot.val();
-
-                // 3. Handle "Offline" Bus
-                if (!data || !data.lat) {
-                    statusEl.textContent = `Route ${currentRoute} is currently offline.`;
-                    if (currentMarker) {
-                        currentMarker.remove();
-                        currentMarker = null;
-                    }
-                    return;
-                }
-
-                // 4. Handle "Old Data" (the "No Signal" problem)
-                const now = Date.now();
-                const age = now - data.lastSeen;
-                let opacity = 1.0; // Full opacity
-                let statusMessage = `Route ${currentRoute}: Updated just now.`;
-                
-                if (age > 120000) { // Over 2 minutes old
-                    opacity = 0.5; // Make it 50% transparent
-                    statusMessage = `Route ${currentRoute}: Last seen ${Math.round(age/60000)} mins ago.`;
-                }
-
-                statusEl.textContent = statusMessage;
-                const newPosition = [data.lat, data.lng];
-
-                // 5. Update the marker
-                if (currentMarker) {
-                    // If marker exists, just move it and update opacity
-                    currentMarker.setLatLng(newPosition);
-                    currentMarker.setOpacity(opacity);
-                } else {
-                    // If it's the first time, create the marker
-                    currentMarker = L.marker(newPosition, {
-                        icon: busIcon,
-                        opacity: opacity
-                    }).addTo(map);
-                }
-
-                // 6. Move the map to center on the bus
-                map.panTo(newPosition);
-            }, (error) => {
-                // Handle database read errors
-                statusEl.textContent = `Error: ${error.message}`;
-            });
-        });
-
-    </script>
+        <!-- Button with "bus" icon -->
+        <a href="./map.html" class="button button-primary">
+            <i class="fas fa-bus"></i>
+            Track Your Bus
+        </a>
+        
+        <!-- Button with "users" icon -->
+        <a href="./incharges.html" class="button button-secondary">
+            <i class="fas fa-users"></i>
+            Bus In-charge Details
+        </a>
+    </div>
 </body>
 </html>
+
 

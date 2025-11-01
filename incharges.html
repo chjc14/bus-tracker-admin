@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus In-charge Details</title>
+    <!-- Import Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Import Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            /* Calmer background for a content page */
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 1.5rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 1.5rem 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            margin-top: 0;
+            border-bottom: 2px solid #007BFF; /* Primary color accent */
+            padding-bottom: 12px;
+            font-size: 2.2rem;
+        }
+        .route-list {
+            list-style: none;
+            padding: 0;
+        }
+        .route-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 1.5rem 0.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .route-item:last-child {
+            border-bottom: none;
+        }
+        .route-name {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #333;
+            flex-basis: 35%; 
+        }
+        .route-name span {
+            font-weight: 400;
+            font-size: 0.95rem;
+            /* Primary color for route number */
+            color: #007BFF;
+            display: block;
+            margin-top: 4px;
+        }
+        
+        .incharge-details {
+            flex-basis: 65%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Space between in-charges */
+        }
+        
+        .incharge-person {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .incharge-name, .incharge-phone {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between icon and text */
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .incharge-name i {
+            color: #17a2b8; /* Teal icon */
+            width: 16px;
+            text-align: center;
+        }
+
+        .incharge-phone i {
+            color: #28a745; /* Green icon */
+            width: 16px;
+            text-align: center;
+        }
+        
+        .incharge-name span {
+            font-weight: 700;
+            color: #333;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            background-color: #6c757d; /* Neutral grey */
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem 1.5rem;
+            }
+            .route-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .route-name {
+                margin-bottom: 12px;
+                flex-basis: 100%;
+            }
+            .incharge-details {
+                flex-basis: 100%;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bus In-charge Details</h1>
+
+        <ul class="route-list">
+
+            <li class="route-item">
+                <div class="route-name">
+                    BEERAMGUDA
+                    <span>Route 8</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. B. Govind Reddy (MCT)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9849994424</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. S. Bala Padmaja (CIVIL)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9866648892</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    PATANCHERU
+                    <span>Route 9</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. B. Kesava Rao (ECE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9492924505</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. M. Padmaja (CIVIL)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9962433838</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    JNTU
+                    <span>Route 10</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. D. Tarangini (CIVIL)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9010453869</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. Karuna Verma (ET)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>8897928579</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    PRAGATI NAGAR
+                    <span>Route 10J</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. V. Surendra (M&H)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>8374579091</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. Y V N Chandana (MCT)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>7995071777</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    MOTHI NAGAR
+                    <span>Route 11</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. B Sudhakar (LIC)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9848430774</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. B. Lokesh (IT)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>8019923406</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    MOOSAPET
+                    <span>Route 12</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. A. Ratna Raju (CSE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>8328255486</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. P. Divija Reddy (ET)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9533302375</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    BOWENPALLY
+                    <span>Route 13</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. P V Prasad Reddy (MCT)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9494438162</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. S. Ashwini (CoE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9985597227</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    JEEDIMETLA
+                    <span>Route 14</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. A. Amulya (IT)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9618021498</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. B. Madhava Rao (CSE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9441527944</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    ATTAPUR
+                    <span>Route 15 (Via Manikonda)</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. R Mohana Krishna (CSE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>7207897172</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. Gousia Sultana (M&H)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>7893311882</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    ERRAGADDA
+                    <span>Route 16 (Via Suncity)</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. R Srinivas (ET)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9666660028</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. Nabanita Pal (P&C)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9874047737</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    JAGATHGIRI GUTTA
+                    <span>Route 19</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. Ch. Vinay Kumar (EEE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9492755749</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. K. Raghu (ECE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9490438720</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    ALWAL
+                    <span>Route 20</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. K. Satish Kumar (CSE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9949715681</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. Sandhya Rani (CSE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>6304797207</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    KRUPA COMPLEX
+                    <span>Route 21</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. A. Abhilash (Civil)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9177510870</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. Ch. Lakshmi Kumari (IT)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9989799337</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    A.S. RAO NAGAR
+                    <span>Route 22</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. K Krishna Bhavani (CIVIL)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>8019109908</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. K. Kumar Raju (EEE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9849872183</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    NAGARAM
+                    <span>Route 23</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. A. Lakshmi Narayana (CoE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9493403623</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. G. Kumara Swamy (P&C)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9397150151</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    RAMANTHAPUR
+                    <span>Route 31</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. P Durga Devi (ECE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9885590211</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. K. Prudhvi Raj (MCT)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9885009420</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    UPPAL
+                    <span>Route 33</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. S Swetha (ECE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>8374077544</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. B. Praveena (AES)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9397626191</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    UPPAL DEPOT
+                    <span>Route 34</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. S. Raj Reddy (M&H)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9704702424</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. N. Srinivas Reddy (CIVIL)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9490314747</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    NAGOLE
+                    <span>Route 40</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. P. Meghana (MCT)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9550462355</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. M. Vishwaja (ECE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>8374934353</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    SAROORNAGAR
+                    <span>Route 41</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. M. Sanjeev Kumar (ECE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9948061319</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. C. Mahesh (EEE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>7702726245</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    HAYATH NAGAR
+                    <span>Route 43</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. S. Abhishek Reddy (EEE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9885813113</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. G. Gopal (EEE)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>8688545118</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    B.N. REDDY NAGAR
+                    <span>Route 44</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Mr. S.Ajay Kumar (MCT)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9703720008</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. Ch. Prem Kumar (IT)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>7060509299</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    L B NAGAR
+                    <span>Route 45</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Dr. Asheesh Kumar (MCT)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9450372340</span></div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="route-item">
+                <div class="route-name">
+                    NIZAMPET
+                    <span>Route 49</span>
+                </div>
+                <div class="incharge-details">
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. C. Sucharitha (MCT)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>8142942865</span></div>
+                    </div>
+                    <div class="incharge-person">
+                        <div class="incharge-name"><i class="fas fa-user-tie"></i> <span>Ms. A V L Prasuna (IT)</span></div>
+                        <div class="incharge-phone"><i class="fas fa-phone"></i> <span>9849809627</span></div>
+                    </div>
+                </div>
+            </li>
+            
+        </ul>
+        
+        <!-- This "Back" button takes you to the new landing page (index.html) -->
+        <a href="./index.html" class="back-button">
+            &larr; Back to Home
+        </a>
+    </div>
+</body>
+</html>
+

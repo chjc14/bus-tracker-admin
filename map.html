@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Tracker Map</title>
+    
+    <!-- Import Leaflet.js CSS (for the map) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Import Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Make map fill the whole page */
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            /* Use new font */
+            font-family: 'Lato', sans-serif;
+            overflow: hidden; /* Hide scrollbars */
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* This is the new "card" style for the controls */
+        #map-controls {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000; /* Stay on top of the map */
+            
+            background: #ffffff;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-width: 300px;
+            max-width: 90%;
+        }
+
+        #map-controls label {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        /* Style the <select> dropdown */
+        #route-select {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            font-family: 'Lato', sans-serif;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background-color: #fcfcfc;
+            appearance: none; /* Remove default OS styling */
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007BFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 14px 14px;
+            cursor: pointer;
+        }
+
+        /* Status message styling */
+        #status-message {
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+        }
+        
+        /* New colorful status styles */
+        #status-message.welcome {
+            display: block;
+            background-color: #e6f7ff; /* Light blue */
+            color: #007BFF;
+        }
+        #status-message.tracking {
+            display: block;
+            background-color: #e6f9e9; /* Light green */
+            color: #28a745;
+        }
+        #status-message.offline {
+            display: block;
+            background-color: #ffeeee; /* Light red */
+            color: #dc3545;
+        }
+        #status-message.connecting {
+            display: block;
+            background-color: #fff8e1; /* Light yellow */
+            color: #ffc107;
+        }
+
+        /* New "Back to Home" button */
+        .home-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: #ffffff;
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 50px; /* Make it a pill */
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .home-link:hover {
+            background-color: #f4f4f4;
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- This is the container for the map -->
+    <div id="map"></div>
+
+    <!-- This is the "Back to Home" button -->
+    <a href="index.html" class="home-link">&larr; Back to Home</a>
+
+    <!-- This is the floating control panel -->
+    <div id="map-controls">
+        <label for="route-select">Select a Bus Route</label>
+        <select id="route-select">
+            <option value="">-- Please choose a route --</option>
+            <option value="route_1">Route 1 (Beeramguda)</option>
+            <option value="route_2">Route 2 (Patancheru)</option>
+            <option value="route_3">Route 3 (JNTU)</option>
+            <option value="route_4">Route 4 (Pragati Nagar)</option>
+            <option value="route_5">Route 5 (Mothi Nagar)</option>
+            <option value="route_6">Route 6 (Moosapet)</option>
+            <!-- 
+                Note: Your 6 friends must know which route number
+                they are assigned to! (e.g., Friend 1 = route_1)
+            -->
+        </select>
+        
+        <!-- This status message will be updated by JavaScript -->
+        <div id="status-message" class="welcome">Select a route to begin tracking.</div>
+    </div>
+
+    <!-- Import Leaflet.js (for the map) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Import Firebase (for the data) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+        // 1. ⚠️ This is your "jasva-yana" Firebase Config from Step 1
+        const firebaseConfig = {
+          apiKey: "AIzaSy...UYEN58", // Use your REAL key from the screenshot
+          authDomain: "jasva-yana.firebaseapp.com",
+          databaseURL: "https://jasva-yana-default-rtdb.firebaseio.com",
+          projectId: "jasva-yana",
+          storageBucket: "jasva-yana.firebaseapp.com",
+          messagingSenderId: "108162722003",
+          appId: "1:108162722003:web:83fd06108ee97f4c957206"
+        };
+
+        // 2. INITIALIZE APPS
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // 3. MAP & APP GLOBALS
+        let map;
+        let busMarker;
+        let currentRouteListener = null; // Store the active listener
+        const statusEl = document.getElementById('status-message');
+        const selectEl = document.getElementById('route-select');
+        
+        // Custom Bus Icon
+        const busIcon = L.icon({
+            iconUrl: 'https://img.icons8.com/color/48/000000/bus.png', // A colorful bus icon
+            iconSize: [38, 38], // size of the icon
+            iconAnchor: [19, 38], // point of the icon which will correspond to marker's location
+            popupAnchor: [0, -38] // point from which the popup should open
+        });
+
+        // 4. FUNCTION: Initialize the Map
+        function initMap() {
+            // Centered on Hyderabad/your college area. Adjust [17.5449, 78.3429] as needed.
+            map = L.map('map').setView([17.5449, 78.3429], 13); 
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+        }
+
+        // 5. FUNCTION: Stop any previous listener
+        function stopTracking() {
+            if (currentRouteListener) {
+                currentRouteListener(); // This detaches the Firebase listener
+                currentRouteListener = null;
+            }
+            if (busMarker) {
+                map.removeLayer(busMarker);
+                busMarker = null;
+            }
+        }
+
+        // 6. FUNCTION: Start tracking a new route
+        function startTracking(routeId) {
+            stopTracking(); // Stop listening to the old route
+            
+            const dbRef = ref(database, 'bus_locations/' + routeId);
+            
+            // Set "connecting" status
+            statusEl.textContent = 'Connecting to ' + selectEl.options[selectEl.selectedIndex].text + '...';
+            statusEl.className = 'connecting';
+
+            // This is the "live listener"
+            currentRouteListener = onValue(dbRef, (snapshot) => {
+                const data = snapshot.val();
+                
+                if (!data || !data.lat || !data.lastSeen) {
+                    // No data exists for this route, or it's incomplete
+                    statusEl.textContent = 'This bus is currently offline.';
+                    statusEl.className = 'offline';
+                    if(busMarker) map.removeLayer(busMarker);
+                    busMarker = null;
+                    return;
+                }
+
+                const newPosition = [data.lat, data.lng];
+                const lastSeenTime = new Date(data.lastSeen).toLocaleTimeString();
+                
+                // Check if data is old (more than 2 minutes)
+                const isOffline = (Date.now() - data.lastSeen) > 120000;
+                
+                if(isOffline) {
+                    statusEl.textContent = `Offline. Last seen at ${lastSeenTime}`;
+                    statusEl.className = 'offline';
+                } else {
+                    statusEl.textContent = `Tracking! Last update: ${lastSeenTime}`;
+                    statusEl.className = 'tracking';
+                }
+
+                if (!busMarker) {
+                    // Create the marker for the first time
+                    busMarker = L.marker(newPosition, { icon: busIcon }).addTo(map);
+                    map.setView(newPosition, 15); // Zoom to the bus
+                } else {
+                    // Move the existing marker
+                    busMarker.setLatLng(newPosition);
+                    map.panTo(newPosition); // Smoothly move map to follow
+                }
+            });
+        }
+
+        // 7. EVENT LISTENER for the dropdown
+        selectEl.addEventListener('change', (e) => {
+            const selectedRoute = e.target.value;
+            if (selectedRoute) {
+                startTracking(selectedRoute);
+            } else {
+                stopTracking();
+                statusEl.textContent = 'Select a route to begin tracking.';
+                statusEl.className = 'welcome';
+            }
+        });
+
+        // 8. START THE MAP!
+        initMap();
+
+    </script>
+</body>
+</html>
+
