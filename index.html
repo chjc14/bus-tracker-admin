@@ -3,102 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>College Bus Service</title>
+    <title>Jasva Yana - College Bus Portal</title>
     <!-- Import Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <!-- Import Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
         body {
-            /* Use new fonts */
             font-family: 'Lato', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
             margin: 0;
-            /* New subtle gradient background */
+            /* New full-height layout */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            /* Subtle background from before */
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
-        .container {
-            text-align: center;
-            background: #ffffff;
-            padding: 2.5rem 3rem;
-            /* New "card" style */
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 90%;
-            border-top: 5px solid #007BFF; /* Primary color accent */
-        }
-        h1 {
-            /* New heading font */
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            color: #333;
-            margin-top: 0;
-            font-size: 2rem;
-        }
-        p {
-            color: #555;
-            margin-bottom: 2.5rem;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-        .button {
-            display: flex; /* Use flex to align icon and text */
-            align-items: center;
-            justify-content: center;
-            gap: 12px; /* Space between icon and text */
+
+        /* --- 1. Header & Navigation --- */
+        .header {
             width: 100%;
-            padding: 15px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            margin-top: 1.5rem;
-            cursor: pointer;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between; /* Puts logo left, nav right */
+            align-items: center;
+            box-sizing: border-box; /* Important for padding to work right */
+            background: rgba(255, 255, 255, 0.3); /* Slight glassy effect */
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #333;
             text-decoration: none;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
         }
-        .button-primary {
-            /* "Go" color - Green */
-            background-color: #28a745; 
+
+        .nav-links a {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #444;
+            text-decoration: none;
+            margin-left: 30px;
+            transition: color 0.3s ease;
         }
-        .button-secondary {
-            /* "Info" color - Teal */
-            background-color: #17a2b8;
+
+        .nav-links a:hover {
+            color: #007BFF; /* Primary blue on hover */
         }
-        .button:hover {
-            transform: translateY(-3px); /* Lift effect */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+
+        .nav-links i {
+            margin-right: 8px; /* Space for icons */
         }
+
+        /* --- 2. Main Hero Section --- */
+        .hero-section {
+            /* This makes it fill the rest of the page */
+            flex-grow: 1; 
+            
+            /* This centers the content */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hero-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 6rem; /* Huge title */
+            margin: 0;
+            
+            /* New Colorful Gradient Text */
+            background: linear-gradient(135deg, #007BFF, #28a745, #17a2b8);
+            background-size: 200% 200%; /* For animation */
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradient-animation 10s ease infinite;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: #555;
+            margin-top: 15px;
+            font-weight: 400;
+        }
+
+        /* Animation for the gradient text */
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+
+        /* --- 3. Responsive for Mobile --- */
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+                flex-direction: column; /* Stack logo and nav */
+                gap: 15px;
+            }
+
+            .nav-links {
+                display: flex;
+                justify-content: space-around; /* Space out links */
+                width: 100%;
+            }
+
+            .nav-links a {
+                margin-left: 0;
+                font-size: 0.9rem;
+            }
+
+            .hero-title {
+                font-size: 3.5rem; /* Smaller title for phones */
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>College Bus Portal</h1>
-        <p>Welcome! Please select an option.</p>
-        
-        <!-- Button with "bus" icon -->
-        <a href="./map.html" class="button button-primary">
-            <i class="fas fa-bus"></i>
-            Track Your Bus
-        </a>
-        
-        <!-- Button with "users" icon -->
-        <a href="./incharges.html" class="button button-secondary">
-            <i class="fas fa-users"></i>
-            Bus In-charge Details
-        </a>
-    </div>
+
+    <!-- 1. Header & Navigation -->
+    <header class="header">
+        <a href="#" class="logo">College Bus Portal</a>
+        <nav class="nav-links">
+            <a href="./map.html">
+                <i class="fas fa-bus"></i>Track Bus
+            </a>
+            <a href="./incharges.html">
+                <i class="fas fa-users"></i>In-charge Details
+            </a>
+        </nav>
+    </header>
+
+    <!-- 2. Main Hero Section -->
+    <main class="hero-section">
+        <h1 class="hero-title">Jasva Yana</h1>
+        <p class="hero-subtitle">Welcome to the College Bus Tracking Portal</p>
+    </main>
+
 </body>
 </html>
+
+
 
 
