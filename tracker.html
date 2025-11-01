@@ -2,214 +2,238 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- This viewport tag is CRITICAL for mobile phones. It makes it non-zoomable. -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Bus Tracker (Admin)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Location with Friends</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* This CSS makes it look like a simple, native app. */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh; /* Full screen height */
-            margin: 0;
-            background-color: #f0f2f5;
-            padding: 15px;
-            box-sizing: border-box; /* Ensures padding doesn't break layout */
-        }
-        .container {
-            background: white;
-            padding: 2rem; /* More spacing */
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
-        }
-        h1 {
-            margin-top: 0;
-            color: #333;
-        }
-        select, button {
-            width: 100%;
-            padding: 15px;
-            font-size: 1rem;
-            border-radius: 10px;
-            margin-top: 1rem;
-            box-sizing: border-box;
-        }
-        select {
-            border: 1px solid #ccc;
-            background: white;
-        }
-        button {
-            border: none;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        #btnStart {
-            background-color: #007aff; /* Apple Blue */
-        }
-        #btnStart:disabled {
-            background-color: #a0a0a0; /* Greyed out */
-        }
-        #btnStop {
-            background-color: #ff3b30; /* Apple Red */
-        }
-        #btnStop:disabled {
-            background-color: #a0a0a0; /* Greyed out */
-        }
-        #status {
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: #555;
-            min-height: 40px; /* Prevents layout jump when text appears */
-            line-height: 1.4;
-            word-wrap: break-word; /* Prevents long errors from overflowing */
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
-    <div class="container">
-        <h1>Bus Tracker</h1>
+    <div class="w-full max-w-md bg-white rounded-xl shadow-2xl p-8">
         
-        <!-- This is the dropdown. Your friends MUST select their assigned route. -->
-        <select id="routeSelect">
-            <option value="">-- Select Your Route --</option>
-            <option value="route_1">Route 1 (Friend A)</option>
-            <option value="route_2">Route 2 (Friend B)</option>
-            <option value="route_3">Route 3 (Friend C)</option>
-            <option value="route_4">Route 4 (Friend D)</option>
-            <option value="route_5">Route 5 (Friend E)</option>
-            <option value="route_6">Route 6 (Your Name)</option>
-        </select>
+        <h1 class="text-3xl font-bold text-center text-blue-700 mb-6">Share Bus Location</h1>
+        
+        <p class="text-center text-gray-600 mb-8">
+            Are you on the bus? Select your route and tap "Start Sharing" to help your friends track the bus!
+            <br>
+            <strong class="text-red-600">You must keep this page open for it to work.</strong>
+        </p>
 
-        <button id="btnStart">Start Sharing</button>
-        <button id="btnStop" disabled>Stop Sharing</button>
+        <div class="mb-6">
+            <label for="route-select" class="block text-sm font-medium text-gray-700 mb-2">Select Your Route:</label>
+            <select id="route-select" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">-- Please select a route --</option>
+                <!-- Options will be populated by JS -->
+            </select>
+        </div>
 
-        <!-- This div gives feedback, e.g., "Sharing..." or "Error!" -->
-        <div id="status">Select your assigned route and press Start.</div>
+        <div class="flex flex-col gap-4">
+            <button id="start-btn" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 disabled:bg-gray-400 disabled:hover:scale-100 disabled:shadow-none">
+                Start Sharing Location
+            </button>
+            
+            <button id="stop-btn" class="w-full bg-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300 transform hover:scale-105 disabled:bg-gray-400 disabled:hover:scale-100 disabled:shadow-none" disabled>
+                Stop Sharing
+            </button>
+        </div>
+
+        <div id="status-message" class="mt-6 text-center font-medium"></div>
+
+        <div class="mt-6 text-center">
+            <a href="./map.html" class="text-sm text-blue-600 hover:underline">&larr; Back to Map</a>
+        </div>
     </div>
 
-    <!-- This is where the magic happens. We import the Firebase libraries. -->
+    <!-- Firebase SDK -->
     <script type="module">
-        // 1. IMPORT FIREBASE SERVICES
-        // We are using the "script" tag method, not "npm".
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getDatabase, ref, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 2. ⚠️ PASTE YOUR FIREBASE CONFIG HERE
-        // This is the "Master Key" from Step 1.
-        // This object connects this HTML file to YOUR "jasva-yana" database.
-        const firebaseConfig = {
-          // Replace this with your *own* config from your project's screenshot
-          apiKey: "AIzaSyD4bj8eWUokNXaEQ6EiDafSpWWYKUYEN58",
-          authDomain: "jasva-yana.firebaseapp.com",
-          databaseURL: "https://jasva-yana-default-rtdb.firebaseio.com",
-          projectId: "jasva-yana",
-          storageBucket: "jasva-yana.firebasestorage.app",
-          messagingSenderId: "1081627220083",
-          appId: "1:1081627220083:web:03fd06108ee97f4c957206"
-        };
-
-        // 3. INITIALIZE FIREBASE
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // 4. Get references to the HTML elements
-        const routeSelect = document.getElementById('routeSelect');
-        const btnStart = document.getElementById('btnStart');
-        const btnStop = document.getElementById('btnStop');
-        const statusEl = document.getElementById('status');
-
-        let watchId = null; // This variable will store the ID of our GPS "watcher".
-
-        // 5. This function runs when "Start" is clicked
-        btnStart.addEventListener('click', () => {
-            const selectedRoute = routeSelect.value;
-
-            // Simple validation
-            if (!selectedRoute) {
-                statusEl.textContent = "Please select your assigned route first!";
-                return;
+        // Wrap all script logic in an async function to make `await` and `return` valid.
+        async function main() {
+            // --- Firebase Configuration ---
+            let firebaseConfig;
+            try {
+                firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+            } catch (e) {
+                console.error("Firebase config parsing error:", e);
+                document.getElementById('status-message').textContent = 'Error: App is not configured correctly.';
+                return; // This is now valid inside a function
             }
 
-            // Check if the phone's browser has GPS
-            if (!navigator.geolocation) {
-                statusEl.textContent = "Error: Geolocation is not supported by your browser.";
-                return;
-            }
-
-            statusEl.textContent = "Connecting to GPS...";
-
-            // This is the core command. It "watches" the phone's position.
-            // It will automatically run the (position) => {...} function
-            // every time the phone moves.
-            watchId = navigator.geolocation.watchPosition(
-                (position) => {
-                    // Success! We got a location.
-                    const { latitude, longitude } = position.coords;
-                    
-                    // This is the data we will send to Firebase
-                    const locationData = {
-                        lat: latitude,
-                        lng: longitude,
-                        lastSeen: serverTimestamp() // Use Firebase's clock for accuracy
-                    };
-
-                    // This is the path we will write to, e.g. "bus_locations/route_1"
-                    const dbRef = ref(db, 'bus_locations/' + selectedRoute);
-
-                    // This is the command that sends the data to the cloud
-                    set(dbRef, locationData)
-                        .then(() => {
-                            // Give the user good feedback
-                            statusEl.innerHTML = `Sharing for <b>${selectedRoute}</b>.<br>Location updated.`;
-                        })
-                        .catch((error) => {
-                            // Handle database errors
-                            statusEl.textContent = `Error writing to database: ${error.message}`;
-                        });
-                },
-                (error) => {
-                    // This runs if the GPS fails (e.g., user denies permission)
-                    statusEl.textContent = `Error getting location: ${error.message}`;
-                },
-                {
-                    // These are options for high-accuracy tracking.
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
-
-            // Update the buttons: disable "Start", enable "Stop"
-            btnStart.disabled = true;
-            btnStop.disabled = false;
-            routeSelect.disabled = true; // Lock the dropdown
-        });
-
-        // 6. This function runs when "Stop" is clicked
-        btnStop.addEventListener('click', () => {
-            // This is the crucial command to stop the GPS.
-            if (watchId !== null) {
-                navigator.geolocation.clearWatch(watchId);
-                watchId = null;
-            }
-
-            statusEl.textContent = "Sharing stopped. You are now offline.";
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
             
-            // Reset the buttons for the next use
-            btnStart.disabled = false;
-            btnStop.disabled = true;
-            routeSelect.disabled = false;
-        });
+            // --- App ID ---
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+            // --- Authentication ---
+            let userId = null;
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                userId = auth.currentUser?.uid;
+                if (!userId) throw new Error("Authentication failed.");
+            } catch (error) {
+                console.error("Authentication Error:", error);
+                document.getElementById('status-message').textContent = 'Error: Could not authenticate.';
+                return; // This is also valid inside a function
+            }
+
+            // --- DOM Elements ---
+            const routeSelect = document.getElementById('route-select');
+            const startBtn = document.getElementById('start-btn');
+            const stopBtn = document.getElementById('stop-btn');
+            const statusMessage = document.getElementById('status-message');
+
+            // --- Route Data (from bus_routes.html) ---
+            const routes = [
+                // Added Route 8, which is in your incharges.html but was missing from the PDF stops
+                "8: BEERAMGUDA",
+                "9: PATANCHERU", "10: BACHUPALLY", "10J: PRAGATI NAGAR", "11: MOTHI NAGAR", 
+                "12: MOOSAPET", "13: BOWENPALLY", "14: JEEDIMETLA", "15: ATTAPUR (Via Tolichowki)", 
+                "16: SECUNDERABAD (Via Suncity)", "19: JAGATHGGIRIGUTTA", "20: ALWAL", "21: ECIL", 
+                "22: A S RAO NAGAR", "23: NAGARAM", "31: RAMANTHAPUR", "33: BODUPPAL", 
+                "34: UPPAL DEPOT", "40: NAGOLE", "41: SAROOR NAGAR", "43: HAYATHNAGAR", 
+                "44: BN REDDY NAGAR", "45: L B NAGAR", "49: NIZAMPET"
+            ];
+            
+            // Populate route dropdown
+            // Sort routes numerically/alphabetically for a clean list
+            routes.sort().forEach(route => {
+                const option = document.createElement('option');
+                option.value = route;
+                option.textContent = route;
+                routeSelect.appendChild(option);
+            });
+
+            // --- State ---
+            let watchId = null;
+            let selectedRoute = "";
+
+            // --- Functions ---
+            
+            function updateStatus(message, isError = false) {
+                statusMessage.textContent = message;
+                statusMessage.className = isError ? 'mt-6 text-center font-medium text-red-600' : 'mt-6 text-center font-medium text-green-600';
+            }
+
+            async function startSharing() {
+                selectedRoute = routeSelect.value;
+                if (!selectedRoute) {
+                    updateStatus("Please select a route first.", true);
+                    return;
+                }
+
+                if (!navigator.geolocation) {
+                    updateStatus("Geolocation is not supported by your browser.", true);
+                    return;
+                }
+
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                routeSelect.disabled = true;
+
+                updateStatus("Starting location sharing...", false);
+
+                try {
+                    // 1. Create the document for the route
+                    const routeDocRef = doc(db, `artifacts/${appId}/public/data/bus_locations`, selectedRoute);
+                    await setDoc(routeDocRef, {
+                        route: selectedRoute,
+                        lat: null,
+                        lng: null,
+                        updatedAt: serverTimestamp(),
+                        isSharing: true,
+                        sharerId: userId // ID of the "friend" sharing
+                    });
+
+                    // 2. Start watching the position
+                    watchId = navigator.geolocation.watchPosition(
+                        async (position) => {
+                            const { latitude, longitude } = position.coords;
+                            
+                            // Update the location in Firestore
+                            await updateDoc(routeDocRef, {
+                                lat: latitude,
+                                lng: longitude,
+                                updatedAt: serverTimestamp(),
+                                isSharing: true
+                            });
+                            
+                            updateStatus(`Sharing location for: ${selectedRoute}`, false);
+                        },
+                        (error) => {
+                            console.error("Geolocation Error:", error);
+                            updateStatus(`Error: ${error.message}`, true);
+                            if (error.code === 1) { // PERMISSION_DENIED
+                                 updateStatus("Error: Please allow location permission.", true);
+                                 stopSharing(true); // Stop to reset UI
+                            }
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 0 
+                        }
+                    );
+
+                } catch (error) {
+                    console.error("Firestore Error:", error);
+                    updateStatus("Error: Could not start sharing.", true);
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                    routeSelect.disabled = false;
+                }
+            }
+
+            async function stopSharing(isError = false) {
+                if (watchId !== null) {
+                    navigator.geolocation.clearWatch(watchId);
+                    watchId = null;
+                }
+
+                // Update Firestore to mark the bus as "offline"
+                if (selectedRoute) {
+                    try {
+                        const routeDocRef = doc(db, `artifacts/${appId}/public/data/bus_locations`, selectedRoute);
+                        await updateDoc(routeDocRef, {
+                            isSharing: false,
+                            updatedAt: serverTimestamp()
+                        });
+                    } catch (error) {
+                        console.error("Firestore update error on stop:", error);
+                    }
+                }
+
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                routeSelect.disabled = false;
+                selectedRoute = "";
+                
+                if (!isError) {
+                    updateStatus("Location sharing stopped.", false);
+                }
+            }
+
+            // --- Event Listeners ---
+            startBtn.addEventListener('click', startSharing);
+            stopBtn.addEventListener('click', () => stopSharing(false));
+        }
+
+        // Call the main function to run the script
+        main();
+    
     </script>
 </body>
 </html>
+
 
