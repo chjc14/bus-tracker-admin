@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale:1.0">
-    <title>Jasva Yana - College Bus Portal</title>
+    <title>Jasva Yana - Bus Portal</title>
     <!-- Import Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,163 +12,157 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        body {
-            font-family: 'Lato', sans-serif;
+        /* CSS Reset */
+        html, body {
+            height: 100%;
             margin: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Lato', sans-serif;
         }
 
-        /* --- 1. Header & Navigation --- */
-        .header {
-            width: 100%;
-            padding: 20px 40px;
+        /* NEW BODY STYLING for flex layout */
+        body {
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+        }
+
+        /* Header Styling (Unchanged) */
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(5px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            padding: 1.25rem 2.5rem; /* 20px 40px */
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            box-sizing: border-box; /* Important */
         }
-
-        .logo {
+        .header-title {
             font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 1.4rem;
-            color: #333;
+            font-size: 1.4rem; /* 22px */
+            color: #007BFF;
             text-decoration: none;
+            font-weight: 700;
         }
-
-        .nav-links a {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
-            color: #444;
+        .header-nav {
+            display: flex;
+            gap: 1.75rem; /* 28px */
+        }
+        .header-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem; /* 8px */
             text-decoration: none;
-            margin-left: 30px;
+            color: #555;
+            font-weight: 700;
+            font-size: 0.95rem;
             transition: color 0.3s ease;
         }
-
-        .nav-links a:hover {
-            color: #007BFF; /* Primary blue on hover */
+        .header-nav a:hover {
+            color: #007BFF;
+        }
+        .header-nav .nav-button {
+            background-color: #007BFF;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .header-nav .nav-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            color: white;
+        }
+        .menu-toggle {
+            display: none; /* For mobile */
+            font-size: 1.5rem;
+            cursor: pointer;
         }
 
-        .nav-links i {
-            margin-right: 8px; /* Space for icons */
-        }
-
-        /* --- 2. Main Hero Section --- */
+        /* * NEW HERO SECTION STYLING 
+         * This is the main fix. 
+         * 'flex-grow: 1' tells it to take up ALL available empty space.
+         */
         .hero-section {
-            flex-grow: 1; 
+            flex-grow: 1; /* This is the fix! */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 20px;
+            padding: 2rem;
+            box-sizing: border-box;
         }
 
+        /* Hero Title */
         .hero-title {
             font-family: 'Poppins', sans-serif;
+            font-size: clamp(3rem, 10vw, 6.5rem); /* Responsive font size */
             font-weight: 700;
-            font-size: 6rem; /* Huge title */
             margin: 0;
-            background: linear-gradient(135deg, #007BFF, #28a745, #17a2b8);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: gradient-animation 10s ease infinite;
+            /* Restored the previous solid color */
+            color: #2a9d8f;
         }
-        
+
+        /* Hero Subtitle */
         .hero-subtitle {
-            font-size: 1.5rem;
-            color: #555;
-            margin-top: 15px;
+            font-size: clamp(1rem, 3vw, 1.5rem); /* Responsive font size */
+            margin: 0.5rem 0 0 0;
+            color: #444;
             font-weight: 400;
         }
 
-        @keyframes gradient-animation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* --- 3. Responsive for Mobile --- */
-        @media (max-width: 768px) {
-            .header {
-                padding: 15px;
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .nav-links {
-                display: flex;
-                flex-wrap: wrap; /* Allow links to wrap */
-                justify-content: center;
-                gap: 15px; /* Add gap for wrapped links */
-                width: 100%;
-            }
-
-            .nav-links a {
-                margin-left: 0; /* Remove margin for wrapped links */
-                font-size: 0.9rem;
-            }
-
-            .hero-title {
-                font-size: 3.5rem; /* Smaller title for phones */
-            }
-
-            .hero-subtitle {
-                font-size: 1.1rem;
-            }
-        }
-        
-        /* Specific rule for 4 links on small screens */
-        @media (max-width: 480px) {
-             .nav-links {
-                /* Evenly space 2 links per row */
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-                width: 100%;
-             }
-             .nav-links a {
-                text-align: center;
-             }
-        }
-
-        /* --- 4. NEW Footer Style --- */
+        /* * NEW FOOTER STYLING 
+         * This is the second fix.
+         * 'margin-top: auto' pushes it to the bottom.
+         */
         .footer {
+            width: 100%;
             text-align: center;
-            padding: 20px;
-            color: #6c757d; /* A subtle dark grey color */
+            padding: 1.5rem; /* 24px */
+            box-sizing: border-box;
+            background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
+            color: #777;
             font-size: 0.9rem;
-            /* This is not needed because hero-section has flex-grow: 1 */
-            /* margin-top: auto; */ 
+            margin-top: auto; /* This is the fix! */
         }
 
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+            .header-nav {
+                display: none; /* Hide nav links */
+            }
+            .menu-toggle {
+                display: block; /* Show hamburger icon */
+            }
+            .hero-title {
+                font-size: 3rem;
+            }
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 1. Header & Navigation -->
-    <header class="header">
-        <a href="./index.html" class="logo">College Bus Portal</a>
-        <nav class="nav-links">
-            <a href="./map.html">
+    <!-- 1. HEADER (Top Bar) -->
+    <header>
+        <a href="#" class="header-title">College Bus Portal</a>
+        
+        <!-- Navigation -->
+        <nav class="header-nav">
+            <!-- These links will go to your other HTML pages -->
+            <a href="./map.html" class="nav-button">
                 <i class="fas fa-bus"></i>Track Bus
             </a>
             <a href="./incharges.html">
                 <i class="fas fa-users"></i>In-charge Details
             </a>
-            <!-- NEW LINKS -->
             <a href="./help.html">
                 <i class="fas fa-question-circle"></i>Help
             </a>
@@ -176,21 +170,29 @@
                 <i class="fas fa-info-circle"></i>About
             </a>
         </nav>
+
+        <!-- Mobile Menu Icon (for future use) -->
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
     </header>
 
-    <!-- 2. Main Hero Section -->
-    <main class.="hero-section">
+    <!-- 2. HERO SECTION (Main Content - Now correctly centered) -->
+    <main class="hero-section">
         <h1 class="hero-title">Jasva Yana</h1>
         <p class="hero-subtitle">Welcome to the College Bus Tracking Portal</p>
     </main>
 
-    <!-- 3. NEW Footer -->
+    <!-- 3. FOOTER (Now correctly at the bottom) -->
     <footer class="footer">
         © 2025 Jasva Yana. All Rights Reserved. A Student Project.
     </footer>
 
 </body>
 </html>
+
+
+
 
 
 
