@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale:1.0">
+    <title>About - Bus Portal</title>
+    <!-- Import Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Import Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 1.5rem;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 1.5rem 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        h1, h2 {
+            font-family: 'Poppins', sans-serif;
+            color: #007BFF;
+            margin-top: 0;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 12px;
+        }
+        h1 { font-size: 2.2rem; }
+        h2 { font-size: 1.8rem; margin-top: 40px; }
+
+        .about-text {
+            font-size: 1.05rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        /* Developer Profile Section */
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-top: 20px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+        
+        /* UPDATED: Style for your <img> tag */
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            /* This will make your image fit perfectly */
+            object-fit: cover; 
+            flex-shrink: 0;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .profile-info h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.4rem;
+            color: #333;
+            margin: 0 0 5px 0;
+        }
+        .profile-info p {
+            margin: 0;
+            color: #666;
+            line-height: 1.6;
+        }
+        .profile-links {
+            margin-top: 15px;
+        }
+        .profile-links a {
+            font-size: 1.5rem;
+            color: #555;
+            margin-right: 15px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .profile-links a:hover {
+            color: #007BFF;
+        }
+
+
+        .back-button {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            background-color: #6c757d;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem 1.5rem;
+            }
+            .profile {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>About This Project</h1>
+        <p class="about-text">
+            <b>Jasva Yana</b> is a student-led initiative designed to make the college commute easier and more predictable. This portal provides a real-time, live-tracking solution for all college buses, allowing students to see exactly where their bus is, reduce wait times, and plan their travel more efficiently.
+        </p>
+        <p class="about-text">
+            This system is built using modern web technologies, including real-time data synchronization with Firebase and interactive mapping with Leaflet.js.
+        </p>
+
+        <h2>About the Developer</h2>
+        <div class="profile">
+            <!-- 
+                This will find the "profile.jpg" file you're about to upload
+                to this repository!
+            -->
+            <img src="./profile.jpg" alt="Profile Picture" class="profile-pic" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <!-- This is a placeholder icon that shows if the image fails to load -->
+            <div class="profile-pic" style="display: none; background: #ddd; color: #aaa; align-items: center; justify-content: center; font-size: 3rem;">
+                <i class="fas fa-user"></i>
+            </div>
+            
+            <div class="profile-info">
+                <!-- UPDATED with your details! -->
+                <h3>Chittineni Jishnu Chowdary</h3>
+                <p>
+                    B.Tech CSE Student
+                    <!-- TODO: You can add a short bio here! -->
+                </D>
+                <div class="profile-links">
+                    <!-- UPDATED with your links! -->
+                    <a href="https://github.com/chjc14" title="GitHub" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/jishnu-chittineni-619439350?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" title="LinkedIn" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <!-- REMOVED the email link as requested -->
+                </div>
+            </div>
+        </div>
+        
+        <a href="./index.html" class="back-button">
+            &larr; Back to Home
+        </a>
+    </div>
+</body>
+</html>
+

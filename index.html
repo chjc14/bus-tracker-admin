@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale:1.0">
     <title>Jasva Yana - College Bus Portal</title>
     <!-- Import Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,11 +15,9 @@
         body {
             font-family: 'Lato', sans-serif;
             margin: 0;
-            /* New full-height layout */
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            /* Subtle background from before */
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
 
@@ -28,12 +26,15 @@
             width: 100%;
             padding: 20px 40px;
             display: flex;
-            justify-content: space-between; /* Puts logo left, nav right */
+            justify-content: space-between;
             align-items: center;
-            box-sizing: border-box; /* Important for padding to work right */
-            background: rgba(255, 255, 255, 0.3); /* Slight glassy effect */
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(5px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .logo {
@@ -64,10 +65,7 @@
 
         /* --- 2. Main Hero Section --- */
         .hero-section {
-            /* This makes it fill the rest of the page */
             flex-grow: 1; 
-            
-            /* This centers the content */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -81,10 +79,8 @@
             font-weight: 700;
             font-size: 6rem; /* Huge title */
             margin: 0;
-            
-            /* New Colorful Gradient Text */
             background: linear-gradient(135deg, #007BFF, #28a745, #17a2b8);
-            background-size: 200% 200%; /* For animation */
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -98,30 +94,30 @@
             font-weight: 400;
         }
 
-        /* Animation for the gradient text */
         @keyframes gradient-animation {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-
         /* --- 3. Responsive for Mobile --- */
         @media (max-width: 768px) {
             .header {
-                padding: 20px;
-                flex-direction: column; /* Stack logo and nav */
+                padding: 15px;
+                flex-direction: column;
                 gap: 15px;
             }
-
+            
             .nav-links {
                 display: flex;
-                justify-content: space-around; /* Space out links */
+                flex-wrap: wrap; /* Allow links to wrap */
+                justify-content: center;
+                gap: 15px; /* Add gap for wrapped links */
                 width: 100%;
             }
 
             .nav-links a {
-                margin-left: 0;
+                margin-left: 0; /* Remove margin for wrapped links */
                 font-size: 0.9rem;
             }
 
@@ -133,6 +129,30 @@
                 font-size: 1.1rem;
             }
         }
+        
+        /* Specific rule for 4 links on small screens */
+        @media (max-width: 480px) {
+             .nav-links {
+                /* Evenly space 2 links per row */
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                width: 100%;
+             }
+             .nav-links a {
+                text-align: center;
+             }
+        }
+
+        /* --- 4. NEW Footer Style --- */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d; /* A subtle dark grey color */
+            font-size: 0.9rem;
+            /* This is not needed because hero-section has flex-grow: 1 */
+            /* margin-top: auto; */ 
+        }
 
     </style>
 </head>
@@ -140,7 +160,7 @@
 
     <!-- 1. Header & Navigation -->
     <header class="header">
-        <a href="#" class="logo">College Bus Portal</a>
+        <a href="./index.html" class="logo">College Bus Portal</a>
         <nav class="nav-links">
             <a href="./map.html">
                 <i class="fas fa-bus"></i>Track Bus
@@ -148,17 +168,31 @@
             <a href="./incharges.html">
                 <i class="fas fa-users"></i>In-charge Details
             </a>
+            <!-- NEW LINKS -->
+            <a href="./help.html">
+                <i class="fas fa-question-circle"></i>Help
+            </a>
+            <a href="./about.html">
+                <i class="fas fa-info-circle"></i>About
+            </a>
         </nav>
     </header>
 
     <!-- 2. Main Hero Section -->
-    <main class="hero-section">
+    <main class.="hero-section">
         <h1 class="hero-title">Jasva Yana</h1>
         <p class="hero-subtitle">Welcome to the College Bus Tracking Portal</p>
     </main>
 
+    <!-- 3. NEW Footer -->
+    <footer class="footer">
+        © 2025 Jasva Yana. All Rights Reserved. A Student Project.
+    </footer>
+
 </body>
 </html>
+
+
 
 
 

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale:1.0">
+    <title>Help - Bus Portal</title>
+    <!-- Import Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Import Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 1.5rem;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 1.5rem 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            color: #007BFF;
+            margin-top: 0;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 12px;
+            font-size: 2.2rem;
+        }
+
+        /* How-to Steps */
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .step-card {
+            flex-basis: 30%;
+            text-align: center;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+
+        .step-card i {
+            font-size: 3rem;
+            color: #28a745; /* Green icon */
+        }
+
+        .step-card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            color: #333;
+            margin-top: 15px;
+        }
+        
+        .step-card p {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            background-color: #6c757d;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .steps-container {
+                flex-direction: column; /* Stack steps vertically */
+            }
+            .step-card {
+                flex-basis: 100%;
+            }
+            .container {
+                padding: 1rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>How to Use This Portal</h1>
+        
+        <div class="steps-container">
+            <div class="step-card">
+                <i class="fas fa-map-location-dot"></i>
+                <h3>1. Track Your Bus</h3>
+                <p>Click "Track Bus" on the home page menu. This will open the live map showing all active bus routes.</p>
+            </div>
+            <div class="step-card">
+                <i class="fas fa-route"></i>
+                <h3>2. Select Your Route</h3>
+                <p>Use the dropdown menu on the map page to select the specific route you are waiting for.</p>
+            </div>
+            <div class="step-card">
+                <i class="fas fa-satellite-dish"></i>
+                <h3>3. See Live Location</h3>
+                <p>The bus icon will appear on the map, moving in real-time and showing the last update time.</p>
+            </div>
+        </div>
+        
+        <a href="./index.html" class="back-button">
+            &larr; Back to Home
+        </a>
+    </div>
+</body>
+</html>
+
